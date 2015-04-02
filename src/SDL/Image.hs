@@ -45,3 +45,8 @@ instance ToNumber InitFlag Word32 where
   toNumber InitPNG  = 2
   toNumber InitTIF  = 4
   toNumber InitWEBP = 8
+
+-- | Clean up any loaded image libraries, freeing memory. You only need to call
+-- this function once.
+quit :: MonadIO m => m ()
+quit = Img.quit

@@ -9,3 +9,4 @@ main = do
   -- print =<< SDL.version
   print =<< IMG.version
   IMG.initialize [IMG.InitPNG]
+  IMG.quit

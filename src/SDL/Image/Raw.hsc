@@ -24,3 +24,10 @@ foreign import ccall "SDL_image.h IMG_Init"
 {-# INLINE init #-}
 init :: MonadIO m => InitFlags -> m CInt
 init = liftIO . init'
+
+foreign import ccall "SDL_image.h IMG_Quit"
+  quit' :: IO ()
+
+{-# INLINE quit #-}
+quit :: MonadIO m => m ()
+quit = liftIO quit'
