@@ -1,0 +1,68 @@
+name:                sdl2-image
+version:             0.1.0.0
+synopsis:            Bindings (both high and low) to SDL_image.
+-- description:
+license:             MIT
+license-file:        LICENSE
+author:              Siniša Biđin
+maintainer:          sinisa@bidin.cc
+-- copyright:
+category:            Graphics
+build-type:          Simple
+cabal-version:       >=1.10
+
+-- extra-source-files:
+  -- cbits/helper.c,
+  -- include/helper.h
+
+source-repository head
+  type:     git
+  location: https://github.com/sbidin/sdl2-image.git
+
+library
+  ghc-options: -Wall
+
+  exposed-modules:
+    SDL.Image,
+    SDL.Image.Raw
+
+  hs-source-dirs:
+    src
+
+  -- c-sources:       cbits/helper.c
+  -- include-dirs:    include
+  -- includes:        SDL_image, helper.h
+  extra-libraries: SDL_image
+
+  -- other-modules: Data.Bitmask
+
+  build-depends:
+    base >= 4.7 && < 5,
+    sdl2 >= 2.0,
+    -- bytestring >= 0.10.4.0,
+    -- linear >= 1.10.1.2,
+    -- text >= 1.1.0.0,
+    transformers >= 0.2
+    -- vector >= 0.10.9.0
+
+  default-language:
+    Haskell2010
+
+flag example
+  description: Build the example executable
+  default: True
+
+executable example
+  if flag(example)
+    build-depends:
+      base >= 4.7 && < 5,
+      -- linear >= 1.10.1.2,
+      sdl2,
+      sdl2-image
+  else
+    buildable: False
+
+  hs-source-dirs: example
+  main-is: Example.hs
+  default-language: Haskell2010
+  ghc-options: -Wall
