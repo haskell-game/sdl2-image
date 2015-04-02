@@ -26,15 +26,22 @@ library
     SDL.Image,
     SDL.Image.Raw
 
+  other-modules:
+    SDL.Image.Internal.Bitmask
+    SDL.Image.Internal.Numbered
+
   hs-source-dirs:
     src
 
   -- c-sources:       cbits/helper.c
   -- include-dirs:    include
   -- includes:        SDL_image, helper.h
-  extra-libraries: SDL_image
 
-  -- other-modules: Data.Bitmask
+  includes:
+    SDL_image.h
+
+  extra-libraries:
+    SDL_image
 
   build-depends:
     base >= 4.7 && < 5,

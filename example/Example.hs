@@ -8,3 +8,4 @@ main = do
   -- SDL.initialize [SDL.InitEverything]
   -- print =<< SDL.version
   print =<< IMG.version
+  IMG.initialize [IMG.InitPNG]
