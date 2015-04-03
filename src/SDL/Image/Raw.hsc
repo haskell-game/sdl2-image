@@ -46,3 +46,10 @@ foreign import ccall "SDL_image.h IMG_Load"
 {-# INLINE load #-}
 load :: MonadIO m => CString -> m (Ptr Surface)
 load = liftIO . load'
+
+foreign import ccall "SDL_image.h SDL_GetError"
+  getError' :: IO CString
+
+{-# INLINE getError #-}
+getError :: MonadIO m => m CString
+getError = liftIO getError'
