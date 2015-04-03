@@ -6,30 +6,38 @@ module SDL.Image where
 
 import Data.Word (Word32)
 import Data.Data (Data)
+import Data.Text (Text)
+import Control.Applicative ((<$>))
+import Data.ByteString (packCString)
+import Data.Text.Encoding (decodeUtf8)
 import Data.Foldable (Foldable)
 import Data.Typeable (Typeable)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import GHC.Generics (Generic)
 import Foreign.Storable (peek)
+import Foreign.C.String (withCString)
 import SDL.Image.Internal.Bitmask (foldFlags)
 import SDL.Image.Internal.Numbered (ToNumber(..))
 
-import qualified SDL.Raw as Sdl
-import qualified SDL.Image.Raw as Img
+import qualified SDL
+import qualified SDL.Raw as Raw
+import qualified SDL.Image.Raw as IMG
 
 -- | Gets the major, minor and patch versions of the linked SDL_image library.
 -- Does not require initialization.
 version :: (Integral a, MonadIO m) => m (a, a, a)
 version = liftIO $ do
-  Sdl.Version major minor patch <- peek =<< Img.getVersion
+  Raw.Version major minor patch <- peek =<< IMG.getVersion
   return (fromIntegral major, fromIntegral minor, fromIntegral patch)
 
--- | Initializes SDL_image by loading support for the given image formats. Do
--- not call any SDL_image functions prior to this one, unless the documentation
--- states you may do otherwise. You may call this function multiple times.
+-- | Initializes SDL_image by loading support for the given image formats. You
+-- should call this function if you prefer to load image support yourself, at a
+-- time when the process isn't as busy. Otherwise, image support will be loaded
+-- dynamically when you attempt to load a JPG, PNG, TIF or WEBP-formatted file.
+-- You may call this function multiple times.
 initialize :: (Foldable f, MonadIO m) => f InitFlag -> m ()
 initialize flags = do
-  _ <- Img.init $ foldFlags toNumber flags -- TODO: Check for error.
+  _ <- IMG.init $ foldFlags toNumber flags -- TODO: Check for error.
   return ()
 
 data InitFlag
@@ -49,4 +57,14 @@ instance ToNumber InitFlag Word32 where
 -- | Clean up any loaded image libraries, freeing memory. You only need to call
 -- this function once.
 quit :: MonadIO m => m ()
-quit = Img.quit
+quit = IMG.quit
+
+load :: MonadIO m => FilePath -> m SDL.Surface
+load path = liftIO $ do
+  surface <- fmap SDL.pointerToSurface $ withCString path IMG.load
+  return surface
+
+getError :: MonadIO m => m Text
+getError = liftIO $ do
+  cstr <- IMG.getError
+  decodeUtf8 <$> packCString cstr
