@@ -23,6 +23,8 @@ module SDL.Image
   , InitFlag(..)
   , load
   , loadTexture
+  , loadTGA
+  , loadTextureTGA
   , version
   , quit
   ) where
@@ -40,6 +42,7 @@ import GHC.Generics           (Generic)
 import Prelude         hiding (foldl)
 import SDL                    (Renderer, Texture, Surface)
 import SDL.Exception          (throwIfNull, throwIf)
+import SDL.Raw.Filesystem     (rwFromFile)
 
 import qualified SDL
 import qualified SDL.Raw
@@ -92,8 +95,26 @@ load path = do
 -- | Same as 'load', but returning a 'Texture' instead.
 loadTexture :: (Functor m, MonadIO m) => Renderer -> FilePath -> m Texture
 loadTexture r path =
-  liftIO . bracket (load path) SDL.freeSurface $ \surface -> do
-    SDL.createTextureFromSurface r surface
+  liftIO . bracket (load path) SDL.freeSurface $
+    SDL.createTextureFromSurface r
+
+-- | If your `TGA` files aren't in a filename ending with ".tga", you can use
+-- this function instead. Note: since `TGA` files don't contain a specific
+-- signature within them, this function might succeed in reading files of other
+-- formats. Only use this function on files you know are `TGA`-formatted.
+loadTGA :: (Functor m, MonadIO m) => FilePath -> m Surface
+loadTGA path =
+  fmap SDL.Surface .
+    throwIfNull "SDL.Image.loadTGA" "IMG_LoadTGA_RW" .
+      liftIO $ do
+        rw <- withCString "rb" $ withCString path . flip rwFromFile
+        IMG.loadTGA_RW rw
+
+-- | Same as 'loadTGA', only returning a 'Texture' instead.
+loadTextureTGA :: (Functor m, MonadIO m) => Renderer -> FilePath -> m Texture
+loadTextureTGA r path =
+  liftIO . bracket (loadTGA path) SDL.freeSurface $
+    SDL.createTextureFromSurface r
 
 -- | Gets the major, minor, patch versions of the linked `SDL_image` library.
 version :: (Integral a, MonadIO m) => m (a, a, a)
