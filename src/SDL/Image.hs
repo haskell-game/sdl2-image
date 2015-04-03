@@ -99,14 +99,13 @@ data InitFlag
   | InitWEBP -- ^ @WEBP@ files.
   deriving (Eq, Enum, Ord, Bounded, Data, Generic, Typeable, Read, Show)
 
--- TODO: Use hsc2hs to fetch typedef enum from header file.
 flagToCInt :: InitFlag -> CInt
-flagToCInt =
+flagToCInt = undefined
   \case
-    InitJPG  -> 1
-    InitPNG  -> 2
-    InitTIF  -> 4
-    InitWEBP -> 8
+    InitJPG  -> IMG.IMG_INIT_JPG
+    InitPNG  -> IMG.IMG_INIT_PNG
+    InitTIF  -> IMG.IMG_INIT_TIF
+    InitWEBP -> IMG.IMG_INIT_WEBP
 
 -- | Loads any given file of a supported image type as a 'Surface', including
 -- @TGA@ if the filename ends with @\".tga\"@. If you have @TGA@ files that

@@ -13,13 +13,15 @@ documentation.
 
 -}
 
+{-# LANGUAGE PatternSynonyms #-}
+
 module SDL.Image.Raw
-  ( init
-  , InitFlags
-  , Free
-  , Format
+  (
+  -- * Loading images
+    Free
   , load
   , load_RW
+  , Format
   , loadTyped_RW
   , loadCUR_RW
   , loadICO_RW
@@ -35,6 +37,8 @@ module SDL.Image.Raw
   , loadTGA_RW
   , loadLBM_RW
   , loadXV_RW
+
+  -- * Testing for formats
   , isCUR
   , isICO
   , isBMP
@@ -48,9 +52,19 @@ module SDL.Image.Raw
   , isPNG
   , isLBM
   , isXV
+
+  -- * Other
+  , InitFlags
+  , pattern IMG_INIT_JPG
+  , pattern IMG_INIT_PNG
+  , pattern IMG_INIT_TIF
+  , pattern IMG_INIT_WEBP
+  , init
   , getVersion
   , quit
   ) where
+
+#include "SDL_image.h"
 
 import Prelude hiding (init)
 import Foreign.Ptr (Ptr)
@@ -67,6 +81,11 @@ getVersion :: MonadIO m => m (Ptr Version)
 getVersion = liftIO getVersion'
 
 type InitFlags = CInt
+
+pattern IMG_INIT_JPG  = #{const IMG_INIT_JPG}
+pattern IMG_INIT_PNG  = #{const IMG_INIT_PNG}
+pattern IMG_INIT_TIF  = #{const IMG_INIT_TIF}
+pattern IMG_INIT_WEBP = #{const IMG_INIT_WEBP}
 
 foreign import ccall "SDL_image.h IMG_Init"
   init' :: InitFlags -> IO InitFlags
@@ -92,12 +111,15 @@ load = liftIO . load'
 foreign import ccall "SDL_image.h IMG_Load_RW"
   load_RW' :: Ptr RWops -> CInt -> IO (Ptr Surface)
 
+-- | Should the 'Ptr' 'RWops' be freed after an operation? 1 for yes, 0 for no.
 type Free = CInt
 
 {-# INLINE load_RW #-}
 load_RW :: MonadIO m => Ptr RWops -> Free -> m (Ptr Surface)
 load_RW src = liftIO . load_RW' src
 
+-- | A case-insensitive string containing the desired format, e.g. @\"jpg\"@ or
+-- @\"PNG\"@.
 type Format = CString
 
 foreign import ccall "SDL_image.h IMG_LoadTyped_RW"
