@@ -206,91 +206,91 @@ foreign import ccall "SDL_image.h IMG_LoadXV_RW"
 loadXV_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
 loadXV_RW = liftIO . loadXV_RW'
 
-foreign import ccall "SDL_image.hr IMG_isCUR"
+foreign import ccall "SDL_image.h IMG_isCUR"
   isCUR' :: Ptr RWops -> IO CInt
 
 {-# INLINE isCUR #-}
 isCUR :: MonadIO m => Ptr RWops -> m CInt
 isCUR = liftIO . isCUR'
 
-foreign import ccall "SDL_image.hr IMG_isICO"
+foreign import ccall "SDL_image.h IMG_isICO"
   isICO' :: Ptr RWops -> IO CInt
 
 {-# INLINE isICO #-}
 isICO :: MonadIO m => Ptr RWops -> m CInt
 isICO = liftIO . isICO'
 
-foreign import ccall "SDL_image.hr IMG_isBMP"
+foreign import ccall "SDL_image.h IMG_isBMP"
   isBMP' :: Ptr RWops -> IO CInt
 
 {-# INLINE isBMP #-}
 isBMP :: MonadIO m => Ptr RWops -> m CInt
 isBMP = liftIO . isBMP'
 
-foreign import ccall "SDL_image.hr IMG_isPNM"
+foreign import ccall "SDL_image.h IMG_isPNM"
   isPNM' :: Ptr RWops -> IO CInt
 
 {-# INLINE isPNM #-}
 isPNM :: MonadIO m => Ptr RWops -> m CInt
 isPNM = liftIO . isPNM'
 
-foreign import ccall "SDL_image.hr IMG_isXPM"
+foreign import ccall "SDL_image.h IMG_isXPM"
   isXPM' :: Ptr RWops -> IO CInt
 
 {-# INLINE isXPM #-}
 isXPM :: MonadIO m => Ptr RWops -> m CInt
 isXPM = liftIO . isXPM'
 
-foreign import ccall "SDL_image.hr IMG_isXCF"
+foreign import ccall "SDL_image.h IMG_isXCF"
   isXCF' :: Ptr RWops -> IO CInt
 
 {-# INLINE isXCF #-}
 isXCF :: MonadIO m => Ptr RWops -> m CInt
 isXCF = liftIO . isXCF'
 
-foreign import ccall "SDL_image.hr IMG_isPCX"
+foreign import ccall "SDL_image.h IMG_isPCX"
   isPCX' :: Ptr RWops -> IO CInt
 
 {-# INLINE isPCX #-}
 isPCX :: MonadIO m => Ptr RWops -> m CInt
 isPCX = liftIO . isPCX'
 
-foreign import ccall "SDL_image.hr IMG_isGIF"
+foreign import ccall "SDL_image.h IMG_isGIF"
   isGIF' :: Ptr RWops -> IO CInt
 
 {-# INLINE isGIF #-}
 isGIF :: MonadIO m => Ptr RWops -> m CInt
 isGIF = liftIO . isGIF'
 
-foreign import ccall "SDL_image.hr IMG_isJPG"
+foreign import ccall "SDL_image.h IMG_isJPG"
   isJPG' :: Ptr RWops -> IO CInt
 
 {-# INLINE isJPG #-}
 isJPG :: MonadIO m => Ptr RWops -> m CInt
 isJPG = liftIO . isJPG'
 
-foreign import ccall "SDL_image.hr IMG_isTIF"
+foreign import ccall "SDL_image.h IMG_isTIF"
   isTIF' :: Ptr RWops -> IO CInt
 
 {-# INLINE isTIF #-}
 isTIF :: MonadIO m => Ptr RWops -> m CInt
 isTIF = liftIO . isTIF'
 
-foreign import ccall "SDL_image.hr IMG_isPNG"
+foreign import ccall "SDL_image.h IMG_isPNG"
   isPNG' :: Ptr RWops -> IO CInt
 
 {-# INLINE isPNG #-}
 isPNG :: MonadIO m => Ptr RWops -> m CInt
 isPNG = liftIO . isPNG'
 
-foreign import ccall "SDL_image.hr IMG_isLBM"
+foreign import ccall "SDL_image.h IMG_isLBM"
   isLBM' :: Ptr RWops -> IO CInt
 
 {-# INLINE isLBM #-}
 isLBM :: MonadIO m => Ptr RWops -> m CInt
 isLBM = liftIO . isLBM'
 
-foreign import ccall "SDL_image.hr IMG_isXV"
+foreign import ccall "SDL_image.h IMG_isXV"
   isXV' :: Ptr RWops -> IO CInt
 
 {-# INLINE isXV #-}
