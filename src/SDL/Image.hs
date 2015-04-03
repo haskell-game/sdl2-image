@@ -1,18 +1,14 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveDataTypeable    #-}
+{-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE OverloadedStrings     #-}
 
 module SDL.Image where
 
-import Control.Applicative ((<$>))
 import Control.Exception (bracket)
 import Control.Monad.IO.Class (MonadIO, liftIO)
-import Data.ByteString (packCString)
 import Data.Data (Data)
 import Data.Foldable (Foldable)
-import Data.Text (Text)
-import Data.Text.Encoding (decodeUtf8)
 import Data.Typeable (Typeable)
 import Foreign.C.String (withCString)
 import Foreign.C.Types (CInt)
@@ -81,10 +77,3 @@ loadTexture :: (Functor m, MonadIO m) => Renderer -> FilePath -> m Texture
 loadTexture r path =
   liftIO . bracket (load path) SDL.freeSurface $ \surface -> do
     SDL.createTextureFromSurface r surface
-
--- | Returns the last error string set by a previously called SDL or SDL_image
--- function. Is the same as SDL.getError.
-getError :: MonadIO m => m Text
-getError = liftIO $ do
-  cstr <- IMG.getError
-  decodeUtf8 <$> packCString cstr

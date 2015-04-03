@@ -173,10 +173,4 @@ foreign import ccall "SDL_image.h IMG_LoadXV_RW"
 loadXV_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
 loadXV_RW = liftIO . loadXV_RW'
 
-foreign import ccall "SDL_image.h SDL_GetError"
-  getError' :: IO CString
 
-{-# INLINE getError #-}
-{-| char *SDL_GetError() -}
-getError :: MonadIO m => m CString
-getError = liftIO getError'
