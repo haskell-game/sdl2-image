@@ -1,12 +1,12 @@
 name:                sdl2-image
 version:             0.1.0.0
-synopsis:            Bindings (both high and low) to SDL_image.
--- description:
+synopsis:            Bindings to SDL_image.
+description:         Both high and low-level Haskell bindings to SDL_image.
 license:             MIT
 license-file:        LICENSE
 author:              Siniša Biđin
 maintainer:          sinisa@bidin.cc
--- copyright:
+copyright:           Copyright © 2015 Siniša Biđin
 category:            Graphics
 build-type:          Simple
 cabal-version:       >=1.10
