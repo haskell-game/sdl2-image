@@ -7,7 +7,6 @@ module SDL.Image where
 
 import Control.Applicative ((<$>))
 import Control.Exception (bracket)
-import Control.Monad (void)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.ByteString (packCString)
 import Data.Data (Data)
@@ -43,7 +42,7 @@ version = liftIO $ do
 initialize :: (Foldable f, MonadIO m) => f InitFlag -> m ()
 initialize flags = do
   let cint = foldFlags toNumber flags
-  throwIf
+  _ <- throwIf
     (\result -> cint /= 0 && cint /= result)
     "SDL.Image.initialize"
     "IMG_Init"

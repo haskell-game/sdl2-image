@@ -46,7 +46,7 @@ main = do
         window <- SDL.createWindow name SDL.defaultWindow
         SDL.showWindow window
         action window path
-        threadDelay $ 1000000*2 -- Two seconds.
+        threadDelay 1000000
         SDL.destroyWindow window
 
   SDL.quit
