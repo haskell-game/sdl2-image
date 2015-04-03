@@ -22,10 +22,6 @@ library
     SDL.Image,
     SDL.Image.Raw
 
-  other-modules:
-    SDL.Image.Internal.Bitmask
-    SDL.Image.Internal.Numbered
-
   hs-source-dirs:
     src
 

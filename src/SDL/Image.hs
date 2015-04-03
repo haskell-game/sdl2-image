@@ -16,8 +16,6 @@ import Foreign.Storable (peek)
 import GHC.Generics (Generic)
 import SDL (Renderer, Texture, Surface)
 import SDL.Exception (throwIfNull, throwIf)
-import SDL.Image.Internal.Bitmask (foldFlags)
-import SDL.Image.Internal.Numbered (ToNumber(..))
 
 import qualified SDL
 import qualified SDL.Raw as Raw
@@ -37,7 +35,7 @@ version = liftIO $ do
 -- You may call this function multiple times.
 initialize :: (Foldable f, MonadIO m) => f InitFlag -> m ()
 initialize flags = do
-  let cint = foldFlags toNumber flags
+  let cint = foldl (\a b -> a .|. flagToCInt b) 0 flags
   _ <- throwIf
     (\result -> cint /= 0 && cint /= result)
     "SDL.Image.initialize"
@@ -53,11 +51,13 @@ data InitFlag
   deriving (Eq, Enum, Ord, Bounded, Data, Generic, Typeable, Read, Show)
 
 -- TODO: Use hsc2hs to fetch typedef enum from header file.
-instance ToNumber InitFlag CInt where
-  toNumber InitJPG  = 1
-  toNumber InitPNG  = 2
-  toNumber InitTIF  = 4
-  toNumber InitWEBP = 8
+flagToCInt :: InitFlag -> CInt
+flagToCInt =
+  \case
+    InitJPG  -> 1
+    InitPNG  -> 2
+    InitTIF  -> 4
+    InitWEBP -> 8
 
 -- | Clean up any loaded image libraries, freeing memory. You only need to call
 -- this function once.
