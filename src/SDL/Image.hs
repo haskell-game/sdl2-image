@@ -117,7 +117,8 @@ decode bytes = liftIO $ do
       throwIfNull "SDL.Image.decode" "IMG_Load_RW" $
         IMG.load_RW rw 0
 
--- | Same as 'decode', but returning a 'Texture' instead.
+-- | Same as 'decode', but returning a 'Texture' instead. If you need to decode
+-- a @TGA@ 'ByteString', use 'decodeTextureTGA' instead.
 decodeTexture :: MonadIO m => Renderer -> ByteString -> m Texture
 decodeTexture r bytes =
   liftIO . bracket (decode bytes) SDL.freeSurface $
@@ -143,7 +144,8 @@ loadTextureTGA r path =
   liftIO . bracket (loadTGA path) SDL.freeSurface $
     SDL.createTextureFromSurface r
 
--- | Same as 'decode', but assumes the input is a @TGA@-formatted image.
+-- | Reads a @TGA@ image from a 'ByteString'. Assumes the input is a
+-- @TGA@-formatted image.
 decodeTGA :: MonadIO m => ByteString -> m Surface
 decodeTGA bytes = liftIO $ do
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
@@ -152,7 +154,7 @@ decodeTGA bytes = liftIO $ do
       throwIfNull "SDL.Image.decodeTGA" "IMG_LoadTGA_RW" $
         IMG.loadTGA_RW rw
 
--- | Same as 'decodeTexture', but assumes the input is a @TGA@-formatted image.
+-- | Same as 'decodeTGA', but returns a 'Texture' instead.
 decodeTextureTGA :: MonadIO m => Renderer -> ByteString -> m Texture
 decodeTextureTGA r bytes =
   liftIO . bracket (decodeTGA bytes) SDL.freeSurface $
@@ -164,7 +166,7 @@ version = liftIO $ do
   SDL.Raw.Version major minor patch <- peek =<< IMG.getVersion
   return (fromIntegral major, fromIntegral minor, fromIntegral patch)
 
--- | Clean up any loaded image libraries, freeing memory. You only need to call
--- this function once.
+-- | Cleans up any loaded image libraries, freeing memory. You only need to
+-- call this function once.
 quit :: MonadIO m => m ()
 quit = IMG.quit
