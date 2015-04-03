@@ -22,9 +22,13 @@ module SDL.Image
   ( initialize
   , InitFlag(..)
   , load
+  , decode
   , loadTexture
+  , decodeTexture
   , loadTGA
+  , decodeTGA
   , loadTextureTGA
+  , decodeTextureTGA
   , version
   , quit
   ) where
@@ -32,28 +36,31 @@ module SDL.Image
 import Control.Exception      (bracket)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.Bits              ((.|.))
+import Data.ByteString        (ByteString)
+import Data.ByteString.Unsafe (unsafeUseAsCStringLen)
 import Data.Data              (Data)
 import Data.Foldable          (Foldable, foldl)
 import Data.Typeable          (Typeable)
 import Foreign.C.String       (withCString)
 import Foreign.C.Types        (CInt)
+import Foreign.Ptr            (castPtr)
 import Foreign.Storable       (peek)
 import GHC.Generics           (Generic)
 import Prelude         hiding (foldl)
 import SDL                    (Renderer, Texture, Surface)
 import SDL.Exception          (throwIfNull, throwIf)
-import SDL.Raw.Filesystem     (rwFromFile)
+import SDL.Raw.Filesystem     (rwFromFile, rwFromConstMem)
 
 import qualified SDL
 import qualified SDL.Raw
 import qualified SDL.Image.Raw as IMG
 
--- | Initializes `SDL_image` by loading support for the chosen image formats.
+-- | Initializes @SDL_image@ by loading support for the chosen image formats.
 --
 -- You should call this function if you prefer to load image support yourself,
 -- at a time when your process isn't as busy. Otherwise, image support will be
--- loaded dynamically when you attempt to load a `JPG`, `PNG`, `TIF` or
--- `WEBP`-formatted file.
+-- loaded dynamically when you attempt to load a @JPG@, @PNG@, @TIF@ or
+-- @WEBP@-formatted file.
 --
 -- You may call this function multiple times.
 initialize :: (Foldable f, MonadIO m) => f InitFlag -> m ()
@@ -69,10 +76,10 @@ initialize flags = do
 -- | Flags intended to be fed to 'initialize'. Each designates early loading of
 -- support for a particular image format.
 data InitFlag
-  = InitJPG  -- ^ Load support for reading `JPG` files.
-  | InitPNG  -- ^ Same, but for `PNG` files.
-  | InitTIF  -- ^ `TIF` files.
-  | InitWEBP -- ^ `WEBP` files.
+  = InitJPG  -- ^ Load support for reading @JPG@ files.
+  | InitPNG  -- ^ Same, but for @PNG@ files.
+  | InitTIF  -- ^ @TIF@ files.
+  | InitWEBP -- ^ @WEBP@ files.
   deriving (Eq, Enum, Ord, Bounded, Data, Generic, Typeable, Read, Show)
 
 -- TODO: Use hsc2hs to fetch typedef enum from header file.
@@ -85,23 +92,44 @@ flagToCInt =
     InitWEBP -> 8
 
 -- | Loads any given file of a supported image type as a 'Surface', including
--- `TGA` if the filename ends with ".tga".
+-- @TGA@ if the filename ends with @\".tga\"@. If you have @TGA@ files that
+-- don't have names ending with @\".tga\"@, use 'loadTGA' instead.
 load :: (Functor m, MonadIO m) => FilePath -> m Surface
 load path = do
   fmap SDL.Surface .
     throwIfNull "SDL.Image.load" "IMG_Load" .
       liftIO $ withCString path IMG.load
 
--- | Same as 'load', but returning a 'Texture' instead.
+-- | Same as 'load', but returning a 'Texture' instead. For @TGA@ files not
+-- ending in ".tga", use 'loadTextureTGA' instead.
 loadTexture :: (Functor m, MonadIO m) => Renderer -> FilePath -> m Texture
 loadTexture r path =
   liftIO . bracket (load path) SDL.freeSurface $
     SDL.createTextureFromSurface r
 
--- | If your `TGA` files aren't in a filename ending with ".tga", you can use
--- this function instead. Note: since `TGA` files don't contain a specific
--- signature within them, this function might succeed in reading files of other
--- formats. Only use this function on files you know are `TGA`-formatted.
+-- | Reads an image from a 'ByteString'. This will work for all supported image
+-- types, __except TGA__. If you need to decode a @TGA@ 'ByteString', use
+-- 'decodeTGA' instead.
+decode :: MonadIO m => ByteString -> m Surface
+decode bytes = liftIO $ do
+  unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
+    rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
+    fmap SDL.Surface .
+      throwIfNull "SDL.Image.decode" "IMG_Load_RW" $
+        IMG.load_RW rw 0
+
+-- | Same as 'decode', but returning a 'Texture' instead.
+decodeTexture :: MonadIO m => Renderer -> ByteString -> m Texture
+decodeTexture r bytes =
+  liftIO . bracket (decode bytes) SDL.freeSurface $
+    SDL.createTextureFromSurface r
+
+-- | If your @TGA@ files aren't in a filename ending with @\".tga\"@, you can
+-- load them using this function.
+--
+-- Note: since @TGA@ files don't contain a specific signature within them, this
+-- function might succeed in reading files of other formats. Only use this
+-- function on files you know are @TGA@-formatted.
 loadTGA :: (Functor m, MonadIO m) => FilePath -> m Surface
 loadTGA path =
   fmap SDL.Surface .
@@ -116,7 +144,22 @@ loadTextureTGA r path =
   liftIO . bracket (loadTGA path) SDL.freeSurface $
     SDL.createTextureFromSurface r
 
--- | Gets the major, minor, patch versions of the linked `SDL_image` library.
+-- | Same as 'decode', but assumes the input is a @TGA@-formatted image.
+decodeTGA :: MonadIO m => ByteString -> m Surface
+decodeTGA bytes = liftIO $ do
+  unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
+    rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
+    fmap SDL.Surface .
+      throwIfNull "SDL.Image.decodeTGA" "IMG_LoadTGA_RW" $
+        IMG.loadTGA_RW rw
+
+-- | Same as 'decodeTexture', but assumes the input is a @TGA@-formatted image.
+decodeTextureTGA :: MonadIO m => Renderer -> ByteString -> m Texture
+decodeTextureTGA r bytes =
+  liftIO . bracket (decodeTGA bytes) SDL.freeSurface $
+    SDL.createTextureFromSurface r
+
+-- | Gets the major, minor, patch versions of the linked @SDL_image@ library.
 version :: (Integral a, MonadIO m) => m (a, a, a)
 version = liftIO $ do
   SDL.Raw.Version major minor patch <- peek =<< IMG.getVersion

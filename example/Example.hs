@@ -16,7 +16,6 @@ import qualified SDL.Image as IMG
 examples :: [(Text, SDL.Window -> FilePath -> IO ())]
 examples = [
 
-  -- Load the image as a Surface, blit it to screen.
   ("Loading as surface, blitting",
     \window path -> do
       image <- IMG.load path
@@ -25,7 +24,6 @@ examples = [
       SDL.updateWindowSurface window
       SDL.freeSurface image),
 
-  -- Load the image as a Texture, display it.
   ("Loading as texture, rendering",
     \window path -> do
        r <- SDL.createRenderer window (-1) SDL.defaultRenderer

@@ -31,8 +31,8 @@ library
 
   build-depends:
     base >= 4.7 && < 5,
-    sdl2 >= 2.0,
     bytestring >= 0.10.4.0,
+    sdl2 >= 2.0,
     text >= 1.1.0.0,
     transformers >= 0.2
 
@@ -47,9 +47,9 @@ executable example
   if flag(example)
     build-depends:
       base >= 4.7 && < 5,
-      text >= 1.1.0.0,
       sdl2,
-      sdl2-image
+      sdl2-image,
+      text >= 1.1.0.0
   else
     buildable: False
 
