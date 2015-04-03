@@ -6,7 +6,6 @@ Copyright   : (c) 2015 Siniša Biđin
 License     : MIT
 Maintainer  : sinisa@bidin.cc
 Stability   : experimental
-Portability : GHC
 
 Low-level bindings to the SDL_image library. No error-handling is done here.
 For more information about specific function behaviour, see the @SDL_image@
