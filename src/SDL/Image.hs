@@ -5,23 +5,24 @@
 
 module SDL.Image where
 
-import Data.Data (Data)
-import Data.Text (Text)
 import Control.Applicative ((<$>))
 import Control.Exception (bracket)
-import Data.ByteString (packCString)
-import Data.Text.Encoding (decodeUtf8)
-import Data.Foldable (Foldable)
-import Data.Typeable (Typeable)
+import Control.Monad (void)
 import Control.Monad.IO.Class (MonadIO, liftIO)
-import GHC.Generics (Generic)
-import Foreign.Storable (peek)
+import Data.ByteString (packCString)
+import Data.Data (Data)
+import Data.Foldable (Foldable)
+import Data.Text (Text)
+import Data.Text.Encoding (decodeUtf8)
+import Data.Typeable (Typeable)
 import Foreign.C.String (withCString)
 import Foreign.C.Types (CInt)
+import Foreign.Storable (peek)
+import GHC.Generics (Generic)
+import SDL (Renderer, Texture, Surface)
+import SDL.Exception (throwIfNull, throwIf)
 import SDL.Image.Internal.Bitmask (foldFlags)
 import SDL.Image.Internal.Numbered (ToNumber(..))
-import SDL (Renderer, Texture, Surface)
-import SDL.Exception (throwIfNull)
 
 import qualified SDL
 import qualified SDL.Raw as Raw
@@ -41,7 +42,12 @@ version = liftIO $ do
 -- You may call this function multiple times.
 initialize :: (Foldable f, MonadIO m) => f InitFlag -> m ()
 initialize flags = do
-  _ <- IMG.init $ foldFlags toNumber flags -- TODO: Check for error.
+  let cint = foldFlags toNumber flags
+  throwIf
+    (\result -> cint /= 0 && cint /= result)
+    "SDL.Image.initialize"
+    "IMG_Init"
+    (IMG.init cint)
   return ()
 
 data InitFlag
