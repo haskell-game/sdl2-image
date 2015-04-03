@@ -18,16 +18,33 @@ High-level bindings to the SDL_image library.
 {-# LANGUAGE OverloadedStrings     #-}
 
 module SDL.Image
-  ( initialize
-  , InitFlag(..)
-  , load
+  (
+
+  -- * Loading most images
+  --
+  -- | Use the following actions to read any @PNG@, @JPG@, @TIF@, @GIF@,
+  -- @WEBP@, @CUR@, @ICO@, @BMP@, @PNM@, @XPM@, @XCF@, @PCX@ and @XV@ formatted
+  -- data. If you have @TGA@-formatted data, you might wish to use the actions
+  -- from the <#tga following section> instead.
+    load
   , decode
   , loadTexture
   , decodeTexture
+
+  -- * Loading TGA images
+  --
+  -- | #tga# Since @TGA@ images don't contain a specific unique signature, the
+  -- following actions might succeed even when given files not formatted as
+  -- @TGA@ images. Only use these functions if you're certain the inputs are
+  -- @TGA@-formatted, otherwise they'll throw an exception.
   , loadTGA
   , decodeTGA
   , loadTextureTGA
   , decodeTextureTGA
+
+   -- * Other
+  , initialize
+  , InitFlag(..)
   , version
   , quit
   ) where
@@ -55,6 +72,7 @@ import qualified SDL.Raw
 import qualified SDL.Image.Raw as IMG
 
 -- | Initializes @SDL_image@ by loading support for the chosen image formats.
+-- Explicit initialization is optional.
 --
 -- You should call this function if you prefer to load image support yourself,
 -- at a time when your process isn't as busy. Otherwise, image support will be
@@ -126,10 +144,6 @@ decodeTexture r bytes =
 
 -- | If your @TGA@ files aren't in a filename ending with @\".tga\"@, you can
 -- load them using this function.
---
--- Note: since @TGA@ files don't contain a specific signature within them, this
--- function might succeed in reading files of other formats. Only use this
--- function on files you know are @TGA@-formatted.
 loadTGA :: (Functor m, MonadIO m) => FilePath -> m Surface
 loadTGA path =
   fmap SDL.Surface .
