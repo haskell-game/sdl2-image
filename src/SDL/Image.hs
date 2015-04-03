@@ -1,10 +1,10 @@
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE DeriveGeneric #-}
 
 module SDL.Image where
 
-import Data.Word (Word32)
 import Data.Data (Data)
 import Data.Text (Text)
 import Control.Applicative ((<$>))
@@ -17,9 +17,11 @@ import Control.Monad.IO.Class (MonadIO, liftIO)
 import GHC.Generics (Generic)
 import Foreign.Storable (peek)
 import Foreign.C.String (withCString)
+import Foreign.C.Types (CInt)
 import SDL.Image.Internal.Bitmask (foldFlags)
 import SDL.Image.Internal.Numbered (ToNumber(..))
 import SDL (Renderer, Texture, Surface)
+import SDL.Exception (throwIfNull)
 
 import qualified SDL
 import qualified SDL.Raw as Raw
@@ -50,7 +52,7 @@ data InitFlag
   deriving (Eq, Enum, Ord, Bounded, Data, Generic, Typeable, Read, Show)
 
 -- TODO: Use hsc2hs to fetch typedef enum from header file.
-instance ToNumber InitFlag Word32 where
+instance ToNumber InitFlag CInt where
   toNumber InitJPG  = 1
   toNumber InitPNG  = 2
   toNumber InitTIF  = 4
@@ -64,7 +66,10 @@ quit = IMG.quit
 -- | Loads any given supported image file as a Surface, including TGA if the
 -- filename ends with ".tga".
 load :: MonadIO m => FilePath -> m Surface
-load path = liftIO . fmap SDL.pointerToSurface $ withCString path IMG.load
+load path = do
+  p <- throwIfNull "SDL.Image.load" "IMG_Load" $
+         liftIO $ withCString path IMG.load
+  return $ SDL.pointerToSurface p
 
 -- | Same as SDL.Image.load, but returning a Texture instead.
 loadTexture :: (Functor m, MonadIO m) => Renderer -> FilePath -> m Texture
