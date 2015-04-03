@@ -42,7 +42,7 @@ import SDL                    (Renderer, Texture, Surface)
 import SDL.Exception          (throwIfNull, throwIf)
 
 import qualified SDL
-import qualified SDL.Raw as Raw
+import qualified SDL.Raw
 import qualified SDL.Image.Raw as IMG
 
 -- | Initializes `SDL_image` by loading support for the chosen image formats.
@@ -98,7 +98,7 @@ loadTexture r path =
 -- | Gets the major, minor, patch versions of the linked `SDL_image` library.
 version :: (Integral a, MonadIO m) => m (a, a, a)
 version = liftIO $ do
-  Raw.Version major minor patch <- peek =<< IMG.getVersion
+  SDL.Raw.Version major minor patch <- peek =<< IMG.getVersion
   return (fromIntegral major, fromIntegral minor, fromIntegral patch)
 
 -- | Clean up any loaded image libraries, freeing memory. You only need to call
