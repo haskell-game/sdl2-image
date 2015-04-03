@@ -8,6 +8,7 @@ import Data.Word (Word32)
 import Data.Data (Data)
 import Data.Text (Text)
 import Control.Applicative ((<$>))
+import Control.Exception (bracket)
 import Data.ByteString (packCString)
 import Data.Text.Encoding (decodeUtf8)
 import Data.Foldable (Foldable)
@@ -18,6 +19,7 @@ import Foreign.Storable (peek)
 import Foreign.C.String (withCString)
 import SDL.Image.Internal.Bitmask (foldFlags)
 import SDL.Image.Internal.Numbered (ToNumber(..))
+import SDL (Renderer, Texture, Surface)
 
 import qualified SDL
 import qualified SDL.Raw as Raw
@@ -59,11 +61,19 @@ instance ToNumber InitFlag Word32 where
 quit :: MonadIO m => m ()
 quit = IMG.quit
 
-load :: MonadIO m => FilePath -> m SDL.Surface
-load path = liftIO $ do
-  surface <- fmap SDL.pointerToSurface $ withCString path IMG.load
-  return surface
+-- | Loads any given supported image file as a Surface, including TGA if the
+-- filename ends with ".tga".
+load :: MonadIO m => FilePath -> m Surface
+load path = liftIO . fmap SDL.pointerToSurface $ withCString path IMG.load
 
+-- | Same as SDL.Image.load, but returning a Texture instead.
+loadTexture :: (Functor m, MonadIO m) => Renderer -> FilePath -> m Texture
+loadTexture r path =
+  liftIO . bracket (load path) SDL.freeSurface $ \surface -> do
+    SDL.createTextureFromSurface r surface
+
+-- | Returns the last error string set by a previously called SDL or SDL_image
+-- function. Is the same as SDL.getError.
 getError :: MonadIO m => m Text
 getError = liftIO $ do
   cstr <- IMG.getError
