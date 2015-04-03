@@ -51,6 +51,7 @@ executable example
   if flag(example)
     build-depends:
       base >= 4.7 && < 5,
+      text >= 1.1.0.0,
       sdl2,
       sdl2-image
   else
