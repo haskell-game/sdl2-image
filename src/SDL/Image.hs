@@ -83,11 +83,11 @@ flagToCInt =
 
 -- | Loads any given file of a supported image type as a 'Surface', including
 -- `TGA` if the filename ends with ".tga".
-load :: MonadIO m => FilePath -> m Surface
+load :: (Functor m, MonadIO m) => FilePath -> m Surface
 load path = do
-  p <- throwIfNull "SDL.Image.load" "IMG_Load" $
-         liftIO $ withCString path IMG.load
-  return $ SDL.pointerToSurface p
+  fmap SDL.Surface .
+    throwIfNull "SDL.Image.load" "IMG_Load" .
+      liftIO $ withCString path IMG.load
 
 -- | Same as 'load', but returning a 'Texture' instead.
 loadTexture :: (Functor m, MonadIO m) => Renderer -> FilePath -> m Texture
