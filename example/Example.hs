@@ -8,6 +8,7 @@ import Data.Text          (Text)
 import Data.Text.IO       (putStrLn)
 import Prelude     hiding (putStrLn)
 import System.Environment (getArgs)
+import System.Exit        (exitFailure)
 
 import qualified SDL
 import qualified SDL.Image
@@ -35,11 +36,17 @@ examples = [
 
 main :: IO ()
 main = do
+
   SDL.initialize [SDL.InitVideo]
 
   getArgs >>= \case
-    [] -> putStrLn "Usage: cabal run path/to/image.(png|jpg|...)"
+
+    [] -> do
+      putStrLn "Usage: cabal run path/to/image.(png|jpg|...)"
+      exitFailure
+
     (path:_) ->
+      -- Run each of the examples within a newly-created window.
       flip mapM_ examples $ \(name, action) -> do
         putStrLn name
         window <- SDL.createWindow name SDL.defaultWindow
