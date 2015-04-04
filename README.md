@@ -9,7 +9,7 @@ only install it manually from source, after installing sdl2 itself.
 ```bash
 git clone git@github.com:sbidin/sdl2-image.git
 cd sdl2-image
-cabal install -j
+cabal install
 ```
 
 A small example executable is included with the library. It loads and displays
