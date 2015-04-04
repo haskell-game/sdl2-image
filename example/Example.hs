@@ -3,14 +3,14 @@
 
 module Main where
 
-import Prelude hiding (putStrLn)
-import Data.Text (Text)
-import Data.Text.IO (putStrLn)
-import System.Environment (getArgs)
 import Control.Concurrent (threadDelay)
+import Data.Text          (Text)
+import Data.Text.IO       (putStrLn)
+import Prelude     hiding (putStrLn)
+import System.Environment (getArgs)
 
 import qualified SDL
-import qualified SDL.Image as IMG
+import qualified SDL.Image
 
 -- A sequence of example actions to be perfomed and displayed.
 examples :: [(Text, SDL.Window -> FilePath -> IO ())]
@@ -18,7 +18,7 @@ examples = [
 
   ("Loading as surface, blitting",
     \window path -> do
-      image <- IMG.load path
+      image <- SDL.Image.load path
       screen <- SDL.getWindowSurface window
       SDL.blitSurface image Nothing screen Nothing
       SDL.updateWindowSurface window
@@ -27,10 +27,11 @@ examples = [
   ("Loading as texture, rendering",
     \window path -> do
        r <- SDL.createRenderer window (-1) SDL.defaultRenderer
-       texture <- IMG.loadTexture r path
+       texture <- SDL.Image.loadTexture r path
        SDL.renderClear r
        SDL.renderCopy r texture Nothing Nothing
-       SDL.renderPresent r)]
+       SDL.renderPresent r
+       SDL.destroyTexture texture)]
 
 main :: IO ()
 main = do
