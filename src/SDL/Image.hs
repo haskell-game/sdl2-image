@@ -35,7 +35,7 @@ module SDL.Image
   --
   -- | #tga# Since @TGA@ images don't contain a specific unique signature, the
   -- following actions might succeed even when given files not formatted as
-  -- @TGA@ images. Only use these functions if you're certain the inputs are
+  -- @TGA@ images. Only use these actions if you're certain the inputs are
   -- @TGA@-formatted, otherwise they'll throw an exception.
   , loadTGA
   , decodeTGA
@@ -74,12 +74,12 @@ import qualified SDL.Image.Raw as IMG
 -- | Initializes @SDL_image@ by loading support for the chosen image formats.
 -- Explicit initialization is optional.
 --
--- You should call this function if you prefer to load image support yourself,
+-- You should call this action if you prefer to load image support yourself,
 -- at a time when your process isn't as busy. Otherwise, image support will be
 -- loaded dynamically when you attempt to load a @JPG@, @PNG@, @TIF@ or
 -- @WEBP@-formatted file.
 --
--- You may call this function multiple times.
+-- You may call this action multiple times.
 initialize :: (Foldable f, MonadIO m) => f InitFlag -> m ()
 initialize flags = do
   let cint = foldl (\a b -> a .|. flagToCInt b) 0 flags
@@ -142,7 +142,7 @@ decodeTexture r bytes =
     SDL.createTextureFromSurface r
 
 -- | If your @TGA@ files aren't in a filename ending with @\".tga\"@, you can
--- load them using this function.
+-- load them using this action.
 loadTGA :: (Functor m, MonadIO m) => FilePath -> m Surface
 loadTGA path =
   fmap SDL.Surface .
@@ -180,6 +180,6 @@ version = liftIO $ do
   return (fromIntegral major, fromIntegral minor, fromIntegral patch)
 
 -- | Cleans up any loaded image libraries, freeing memory. You only need to
--- call this function once.
+-- call this action once.
 quit :: MonadIO m => m ()
 quit = IMG.quit
