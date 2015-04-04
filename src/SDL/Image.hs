@@ -100,7 +100,7 @@ data InitFlag
   deriving (Eq, Enum, Ord, Bounded, Data, Generic, Typeable, Read, Show)
 
 flagToCInt :: InitFlag -> CInt
-flagToCInt = undefined
+flagToCInt =
   \case
     InitJPG  -> IMG.IMG_INIT_JPG
     InitPNG  -> IMG.IMG_INIT_PNG
