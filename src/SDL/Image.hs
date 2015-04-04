@@ -69,7 +69,7 @@ import SDL.Raw.Filesystem     (rwFromFile, rwFromConstMem)
 
 import qualified SDL
 import qualified SDL.Raw
-import qualified SDL.Image.Raw as IMG
+import qualified SDL.Raw.Image
 
 -- | Initializes @SDL_image@ by loading support for the chosen image formats.
 -- Explicit initialization is optional.
@@ -87,7 +87,7 @@ initialize flags = do
     (\result -> cint /= 0 && cint /= result)
     "SDL.Image.initialize"
     "IMG_Init"
-    (IMG.init cint)
+    (SDL.Raw.Image.init cint)
   return ()
 
 -- | Flags intended to be fed to 'initialize'. Each designates early loading of
@@ -102,10 +102,10 @@ data InitFlag
 flagToCInt :: InitFlag -> CInt
 flagToCInt =
   \case
-    InitJPG  -> IMG.IMG_INIT_JPG
-    InitPNG  -> IMG.IMG_INIT_PNG
-    InitTIF  -> IMG.IMG_INIT_TIF
-    InitWEBP -> IMG.IMG_INIT_WEBP
+    InitJPG  -> SDL.Raw.Image.IMG_INIT_JPG
+    InitPNG  -> SDL.Raw.Image.IMG_INIT_PNG
+    InitTIF  -> SDL.Raw.Image.IMG_INIT_TIF
+    InitWEBP -> SDL.Raw.Image.IMG_INIT_WEBP
 
 -- | Loads any given file of a supported image type as a 'Surface', including
 -- @TGA@ if the filename ends with @\".tga\"@. If you have @TGA@ files that
@@ -114,7 +114,7 @@ load :: (Functor m, MonadIO m) => FilePath -> m Surface
 load path = do
   fmap SDL.Surface .
     throwIfNull "SDL.Image.load" "IMG_Load" .
-      liftIO $ withCString path IMG.load
+      liftIO $ withCString path SDL.Raw.Image.load
 
 -- | Same as 'load', but returning a 'Texture' instead. For @TGA@ files not
 -- ending in ".tga", use 'loadTextureTGA' instead.
@@ -132,7 +132,7 @@ decode bytes = liftIO $ do
     rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
     fmap SDL.Surface .
       throwIfNull "SDL.Image.decode" "IMG_Load_RW" $
-        IMG.load_RW rw 0
+        SDL.Raw.Image.load_RW rw 0
 
 -- | Same as 'decode', but returning a 'Texture' instead. If you need to decode
 -- a @TGA@ 'ByteString', use 'decodeTextureTGA' instead.
@@ -149,7 +149,7 @@ loadTGA path =
     throwIfNull "SDL.Image.loadTGA" "IMG_LoadTGA_RW" .
       liftIO $ do
         rw <- withCString "rb" $ withCString path . flip rwFromFile
-        IMG.loadTGA_RW rw
+        SDL.Raw.Image.loadTGA_RW rw
 
 -- | Same as 'loadTGA', only returning a 'Texture' instead.
 loadTextureTGA :: (Functor m, MonadIO m) => Renderer -> FilePath -> m Texture
@@ -165,7 +165,7 @@ decodeTGA bytes = liftIO $ do
     rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
     fmap SDL.Surface .
       throwIfNull "SDL.Image.decodeTGA" "IMG_LoadTGA_RW" $
-        IMG.loadTGA_RW rw
+        SDL.Raw.Image.loadTGA_RW rw
 
 -- | Same as 'decodeTGA', but returns a 'Texture' instead.
 decodeTextureTGA :: MonadIO m => Renderer -> ByteString -> m Texture
@@ -176,10 +176,10 @@ decodeTextureTGA r bytes =
 -- | Gets the major, minor, patch versions of the linked @SDL_image@ library.
 version :: (Integral a, MonadIO m) => m (a, a, a)
 version = liftIO $ do
-  SDL.Raw.Version major minor patch <- peek =<< IMG.getVersion
+  SDL.Raw.Version major minor patch <- peek =<< SDL.Raw.Image.getVersion
   return (fromIntegral major, fromIntegral minor, fromIntegral patch)
 
 -- | Cleans up any loaded image libraries, freeing memory. You only need to
 -- call this action once.
 quit :: MonadIO m => m ()
-quit = IMG.quit
+quit = SDL.Raw.Image.quit

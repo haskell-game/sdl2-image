@@ -20,7 +20,7 @@ library
 
   exposed-modules:
     SDL.Image,
-    SDL.Image.Raw
+    SDL.Raw.Image
 
   hs-source-dirs:
     src

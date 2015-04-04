@@ -1,6 +1,6 @@
 {-|
 
-Module      : SDL.Image.Raw
+Module      : SDL.Raw.Image
 Description : Low-level bindings.
 Copyright   : (c) 2015 Siniša Biđin
 License     : MIT
@@ -15,7 +15,7 @@ documentation.
 
 {-# LANGUAGE PatternSynonyms #-}
 
-module SDL.Image.Raw
+module SDL.Raw.Image
   (
   -- * Loading images
     Free
@@ -66,12 +66,12 @@ module SDL.Image.Raw
 
 #include "SDL_image.h"
 
-import Prelude hiding (init)
-import Foreign.Ptr (Ptr)
-import Foreign.C.Types (CInt(..))
-import Foreign.C.String (CString)
 import Control.Monad.IO.Class (MonadIO, liftIO)
-import SDL.Raw.Types (Version, Surface, RWops)
+import Foreign.C.String       (CString)
+import Foreign.C.Types        (CInt(..))
+import Foreign.Ptr            (Ptr)
+import Prelude         hiding (init)
+import SDL.Raw.Types          (Version, Surface, RWops)
 
 foreign import ccall "SDL_image.h IMG_Linked_Version"
   getVersion' :: IO (Ptr Version)
