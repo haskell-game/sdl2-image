@@ -37,6 +37,7 @@ module SDL.Raw.Image
   , loadTGA_RW
   , loadLBM_RW
   , loadXV_RW
+  , loadWEBP_RW
 
   -- * Testing for formats
   , isCUR
@@ -226,6 +227,13 @@ foreign import ccall "SDL_image.h IMG_LoadXV_RW"
 {-# INLINE loadXV_RW #-}
 loadXV_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
 loadXV_RW = liftIO . loadXV_RW'
+
+foreign import ccall "SDL_image.h IMG_LoadWEBP_RW"
+  loadWEBP_RW' :: Ptr RWops -> IO (Ptr Surface)
+
+{-# INLINE loadWEBP_RW #-}
+loadWEBP_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
+loadWEBP_RW = liftIO . loadWEBP_RW'
 
 foreign import ccall "SDL_image.h IMG_isCUR"
   isCUR' :: Ptr RWops -> IO CInt
