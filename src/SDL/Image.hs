@@ -20,7 +20,7 @@ High-level bindings to the SDL_image library.
 module SDL.Image
   (
 
-  -- * Loading most images
+  -- * Loading images
   --
   -- | Use the following actions to read any @PNG@, @JPG@, @TIF@, @GIF@,
   -- @WEBP@, @CUR@, @ICO@, @BMP@, @PNM@, @XPM@, @XCF@, @PCX@ and @XV@ formatted
@@ -42,6 +42,11 @@ module SDL.Image
   , loadTextureTGA
   , decodeTextureTGA
 
+  -- * Format detection
+  , formattedAs
+  , format
+  , Format(..)
+
    -- * Other
   , initialize
   , InitFlag(..)
@@ -49,21 +54,25 @@ module SDL.Image
   , quit
   ) where
 
-import Control.Exception      (bracket)
+import Control.Exception      (bracket, throwIO)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.Bits              ((.|.))
 import Data.ByteString        (ByteString)
 import Data.ByteString.Unsafe (unsafeUseAsCStringLen)
 import Data.Data              (Data)
+import Data.List              (find)
+import Data.Text              (pack)
 import Data.Typeable          (Typeable)
 import Foreign.C.String       (withCString)
 import Foreign.C.Types        (CInt)
-import Foreign.Ptr            (castPtr)
+import Foreign.Ptr            (Ptr, castPtr)
 import Foreign.Storable       (peek)
 import GHC.Generics           (Generic)
-import SDL                    (Renderer, Texture, Surface)
-import SDL.Exception          (throwIfNull, throwIf)
+import SDL                    (Renderer, Texture, Surface(..))
+import SDL.Exception          (SDLException(..), throwIfNull, throwIf)
 import SDL.Raw.Filesystem     (rwFromFile, rwFromConstMem)
+import SDL.Raw.Types          (RWops)
+import System.IO.Unsafe       (unsafePerformIO)
 
 import qualified SDL
 import qualified SDL.Raw
@@ -170,6 +179,63 @@ decodeTextureTGA :: MonadIO m => Renderer -> ByteString -> m Texture
 decodeTextureTGA r bytes =
   liftIO . bracket (decodeTGA bytes) SDL.freeSurface $
     SDL.createTextureFromSurface r
+
+-- | Tests whether a 'ByteString' contains an image of a given format.
+formattedAs :: Format -> ByteString -> Bool
+formattedAs f bytes = unsafePerformIO $ do
+  unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
+    rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
+    formatPredicate f rw >>= \case
+      1 -> return True
+      0 -> return False
+      e -> do
+        let err = "Expected 1 or 0, got " `mappend` pack (show e) `mappend` "."
+        let fun = "IMG_is" `mappend` pack (show f)
+        throwIO $ SDLCallFailed "SDL.Image.formattedAs" fun err
+
+-- | Tries to detect the image format by attempting 'formattedAs' with each
+-- possible 'Format'. If you're trying to test for a specific format, use a
+-- specific 'formattedAs' directly instead.
+format :: ByteString -> Maybe Format
+format bytes = fmap snd $ find fst attempts
+  where
+    attempts = map (\f -> (formattedAs f bytes, f)) [CUR ..]
+
+-- | Each of the supported image formats.
+data Format
+  = CUR
+  | ICO
+  | BMP
+  | PNM
+  | XPM
+  | XCF
+  | PCX
+  | GIF
+  | LBM
+  | XV
+  | JPG
+  | PNG
+  | TIF
+  | WEBP
+  deriving (Eq, Enum, Ord, Bounded, Data, Generic, Typeable, Read, Show)
+
+-- Given an image format, return its raw predicate action.
+formatPredicate :: MonadIO m => Format -> Ptr RWops -> m CInt
+formatPredicate = \case
+  CUR  -> SDL.Raw.Image.isCUR
+  ICO  -> SDL.Raw.Image.isICO
+  BMP  -> SDL.Raw.Image.isBMP
+  PNM  -> SDL.Raw.Image.isPNM
+  XPM  -> SDL.Raw.Image.isXPM
+  XCF  -> SDL.Raw.Image.isXCF
+  PCX  -> SDL.Raw.Image.isPCX
+  GIF  -> SDL.Raw.Image.isGIF
+  LBM  -> SDL.Raw.Image.isLBM
+  XV   -> SDL.Raw.Image.isXV
+  JPG  -> SDL.Raw.Image.isJPG
+  PNG  -> SDL.Raw.Image.isPNG
+  TIF  -> SDL.Raw.Image.isTIF
+  WEBP -> SDL.Raw.Image.isWEBP
 
 -- | Gets the major, minor, patch versions of the linked @SDL_image@ library.
 version :: (Integral a, MonadIO m) => m (a, a, a)
