@@ -53,6 +53,7 @@ module SDL.Raw.Image
   , isPNG
   , isLBM
   , isXV
+  , isWEBP
 
   -- * Other
   , InitFlags
@@ -325,3 +326,10 @@ foreign import ccall "SDL_image.h IMG_isXV"
 {-# INLINE isXV #-}
 isXV :: MonadIO m => Ptr RWops -> m CInt
 isXV = liftIO . isXV'
+
+foreign import ccall "SDL_image.h IMG_isWEBP"
+  isWEBP' :: Ptr RWops -> IO CInt
+
+{-# INLINE isWEBP #-}
+isWEBP :: MonadIO m => Ptr RWops -> m CInt
+isWEBP = liftIO . isWEBP'
