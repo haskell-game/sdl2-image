@@ -197,9 +197,9 @@ formattedAs f bytes = unsafePerformIO $ do
 -- possible 'Format'. If you're trying to test for a specific format, use a
 -- specific 'formattedAs' directly instead.
 format :: ByteString -> Maybe Format
-format bytes = fmap snd $ find fst attempts
+format bytes = fmap fst $ find snd attempts
   where
-    attempts = map (\f -> (formattedAs f bytes, f)) [CUR ..]
+    attempts = map (\f -> (f, formattedAs f bytes)) [minBound..]
 
 -- | Each of the supported image formats.
 data Format
