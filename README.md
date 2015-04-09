@@ -2,6 +2,10 @@
 
 #### Haskell bindings to SDL_image, both high and low-level.
 
+Both sets of bindings should allow you to use any aspect of the original
+SDL_image library. Please report an issue if you encounter a problem/bug
+or feel that something is missing or should be added.
+
 This library depends on and is meant to be used with the `new-api` branch of
 [haskell-game/sdl2](https://github.com/haskell-game/sdl2). Currently you can
 only install it manually from source, after installing sdl2 itself.
