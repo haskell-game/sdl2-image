@@ -19,3 +19,7 @@ a given image. You can find it in the `example` directory.
 cd sdl2-image
 cabal run path/to/some/image.type
 ```
+
+Both sets of bindings should allow you to use any aspect of the original
+SDL_image library. Please report an issue if you encounter a problem/bug
+or feel that something is missing or should be added.
