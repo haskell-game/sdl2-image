@@ -69,7 +69,7 @@ import Foreign.Ptr            (Ptr, castPtr)
 import Foreign.Storable       (peek)
 import GHC.Generics           (Generic)
 import SDL                    (Renderer, Texture, Surface(..))
-import SDL.Exception          (SDLException(..), throwIfNull, throwIf)
+import SDL.Exception          (SDLException(..), throwIfNull, throwIf_)
 import SDL.Raw.Filesystem     (rwFromFile, rwFromConstMem)
 import SDL.Raw.Types          (RWops)
 import System.IO.Unsafe       (unsafePerformIO)
@@ -90,12 +90,11 @@ import qualified SDL.Raw.Image
 initialize :: (Foldable f, MonadIO m) => f InitFlag -> m ()
 initialize flags = do
   let cint = foldl (\a b -> a .|. flagToCInt b) 0 flags
-  _ <- throwIf
+  throwIf_
     (\result -> cint /= 0 && cint /= result)
     "SDL.Image.initialize"
     "IMG_Init"
     (SDL.Raw.Image.init cint)
-  return ()
 
 -- | Flags intended to be fed to 'initialize'. Each designates early loading of
 -- support for a particular image format.
