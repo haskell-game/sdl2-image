@@ -7,7 +7,7 @@ License     : MIT
 Maintainer  : sinisa@bidin.cc
 Stability   : experimental
 
-High-level bindings to the SDL_image library.
+High-level bindings to the @SDL_image@ library.
 
 -}
 

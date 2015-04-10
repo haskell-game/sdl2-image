@@ -7,7 +7,7 @@ License     : MIT
 Maintainer  : sinisa@bidin.cc
 Stability   : experimental
 
-Low-level bindings to the SDL_image library. No error-handling is done here.
+Low-level bindings to the @SDL_image@ library. No error-handling is done here.
 For more information about specific function behaviour, see the @SDL_image@
 documentation.
 
