@@ -110,11 +110,11 @@ foreign import ccall "SDL_image.h IMG_Load"
 load :: MonadIO m => CString -> m (Ptr Surface)
 load = liftIO . load'
 
-foreign import ccall "SDL_image.h IMG_Load_RW"
-  load_RW' :: Ptr RWops -> CInt -> IO (Ptr Surface)
-
 -- | Should the 'Ptr' 'RWops' be freed after an operation? 1 for yes, 0 for no.
 type Free = CInt
+
+foreign import ccall "SDL_image.h IMG_Load_RW"
+  load_RW' :: Ptr RWops -> Free -> IO (Ptr Surface)
 
 {-# INLINE load_RW #-}
 load_RW :: MonadIO m => Ptr RWops -> Free -> m (Ptr Surface)
