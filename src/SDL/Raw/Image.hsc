@@ -1,14 +1,13 @@
 {-|
 
 Module      : SDL.Raw.Image
-Description : Low-level bindings.
 Copyright   : (c) 2015 Siniša Biđin
 License     : MIT
 Maintainer  : sinisa@bidin.cc
 Stability   : experimental
 
-Low-level bindings to the @SDL_image@ library. No error-handling is done here.
-For more information about specific function behaviour, see the @SDL_image@
+Raw bindings to the @SDL_image@ library. No error-handling is done here. For
+more information about specific function behaviour, see the @SDL_image@
 documentation.
 
 -}
