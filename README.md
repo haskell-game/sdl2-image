@@ -1,6 +1,6 @@
 # sdl2-image
 
-#### Haskell bindings to SDL_image, both high and low-level.
+#### Haskell bindings to SDL_image.
 
 This library depends on and is meant to be used with the `new-api` branch of
 [haskell-game/sdl2](https://github.com/haskell-game/sdl2). Currently you can
@@ -20,6 +20,6 @@ cd sdl2-image
 cabal run path/to/some/image.type
 ```
 
-Both sets of bindings should allow you to use any aspect of the original
-SDL_image library. Please report an issue if you encounter a problem/bug
-or feel that something is missing or should be added.
+Both sets of bindings (both raw and the higher level ones) should allow you to
+use any aspect of the original SDL_image library. Please report an issue if you
+encounter a problem/bug or feel that something is missing or should be added.
