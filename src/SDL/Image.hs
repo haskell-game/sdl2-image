@@ -6,6 +6,12 @@ License     : MIT
 Maintainer  : sinisa@bidin.cc
 Stability   : experimental
 
+Bindings to the @SDL_image@ library. These should allow you to load various
+types of images as @SDL@ 'Surface's, as well as detect image formats.
+
+You can safely assume that any monadic action listed here is capable of
+throwing an 'SDLException' in case it encounters an error.
+
 -}
 
 {-# LANGUAGE DeriveDataTypeable    #-}
