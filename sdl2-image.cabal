@@ -1,7 +1,7 @@
 name:          sdl2-image
 version:       0.2
-synopsis:      Bindings to SDL_image.
-description:   Haskell bindings to SDL_image.
+synopsis:      Bindings to SDL2_image.
+description:   Haskell bindings to SDL2_image.
 license:       MIT
 license-file:  LICENSE
 author:        Siniša Biđin

@@ -6,7 +6,7 @@ License     : MIT
 Maintainer  : sinisa@bidin.cc
 Stability   : experimental
 
-Bindings to the @SDL_image@ library. These should allow you to load various
+Bindings to the @SDL2_image@ library. These should allow you to load various
 types of images as @SDL@ 'Surface's, as well as detect image formats.
 
 You can safely assume that any monadic action listed here is capable of
@@ -81,7 +81,7 @@ import qualified SDL
 import qualified SDL.Raw
 import qualified SDL.Raw.Image
 
--- | Initializes @SDL_image@ by loading support for the chosen image formats.
+-- | Initializes @SDL2_image@ by loading support for the chosen image formats.
 -- Explicit initialization is optional.
 --
 -- You should call this action if you prefer to load image support yourself,
@@ -239,7 +239,7 @@ formatPredicate = \case
   TIF  -> SDL.Raw.Image.isTIF
   WEBP -> SDL.Raw.Image.isWEBP
 
--- | Gets the major, minor, patch versions of the linked @SDL_image@ library.
+-- | Gets the major, minor, patch versions of the linked @SDL2_image@ library.
 version :: (Integral a, MonadIO m) => m (a, a, a)
 version = liftIO $ do
   SDL.Raw.Version major minor patch <- peek =<< SDL.Raw.Image.getVersion
