@@ -1,5 +1,7 @@
 # sdl2-image
 
+[![Build Status](https://travis-ci.org/sbidin/sdl2-image.svg?branch=master)](https://travis-ci.org/sbidin/sdl2-image)
+
 #### Haskell bindings to SDL_image
 
 Both the raw and the higher level bindings should allow you to use any aspect
