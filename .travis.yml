@@ -5,7 +5,7 @@ sudo: required
 env:
   - GHCVER=7.10.1
 
-before-install:
+before_install:
   - cd ..
 
   # Install SDL.
@@ -30,8 +30,8 @@ install:
   - git clone https://github.com/haskell-game/sdl2.git
   - cd sdl2 && cabal install -j && cd ..
 
-  # Install any possible sdl2-image dependencies.
-  - cd sdl2-image && $CABAL configure && $CABAL install --only-dependencies -j
-
 script:
+  - cd sdl2-image
+  - $CABAL configure
+  - $CABAL install --only-dependencies -j
   - $CABAL build
