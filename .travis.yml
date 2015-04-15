@@ -1,5 +1,7 @@
 language: haskell
 
+sudo: required
+
 env:
   - GHCVER=7.10.1
 
@@ -29,11 +31,12 @@ before-install:
       export PATH=/opt/ghc/$GHCVER/bin:$PATH
     fi
 
+install:
   # Install haskell-game/sdl2.
   - git clone git@github.com:haskell-game/sdl2.git
   - cd sdl2 && cabal install -j && cd ..
 
-  # Install sdl2-image dependencies.
+  # Install any possible sdl2-image dependencies.
   - cd sdl2-image && $CABAL configure && $CABAL install --only-dependencies -j
 
 script:
