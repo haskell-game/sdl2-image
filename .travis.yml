@@ -31,6 +31,9 @@ install:
   # Install haskell-game/sdl2.
   - git clone https://github.com/haskell-game/sdl2.git
   - cd sdl2 && $CABAL install -j && cd ..
+  - ls -al ~/.cabal/lib
+  - ls -al ~/.cabal/lib/x86_64-linux-ghc-7.10.1
+  - ls -al ~/.cabal/lib/x86_64-linux-ghc-7.10.1/sdl2_Bz87LqXtHtgGItfqn2bR1I/
 
 script:
   - cd sdl2-image
