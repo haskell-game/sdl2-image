@@ -70,7 +70,6 @@ module SDL.Raw.Image
 
 #include "SDL_image.h"
 
-import Control.Monad.IO.Class (MonadIO, liftIO)
 import Foreign.C.String       (CString)
 import Foreign.C.Types        (CInt(..))
 import Foreign.Ptr            (Ptr)
@@ -78,12 +77,8 @@ import Prelude         hiding (init)
 import SDL.Raw.Types          (Version, Surface, RWops)
 import SDL.Raw.Helper         (liftF)
 
-foreign import ccall "IMG_Linked_Version"
-  getVersion' :: IO (Ptr Version)
-
-{-# INLINE getVersion #-}
-getVersion :: MonadIO m => m (Ptr Version)
-getVersion = liftIO getVersion'
+liftF "getVersion" "IMG_Linked_Version"
+  [t|IO (Ptr Version)|]
 
 type InitFlags = CInt
 
@@ -95,12 +90,8 @@ pattern IMG_INIT_WEBP = #{const IMG_INIT_WEBP}
 liftF "init" "IMG_Init"
   [t|InitFlags -> IO InitFlags|]
 
-foreign import ccall "IMG_Quit"
-  quit' :: IO ()
-
-{-# INLINE quit #-}
-quit :: MonadIO m => m ()
-quit = liftIO quit'
+liftF "quit" "IMG_Quit"
+  [t|IO ()|]
 
 liftF "load" "IMG_Load"
   [t|CString -> IO (Ptr Surface)|]
