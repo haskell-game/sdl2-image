@@ -25,9 +25,9 @@ before_install:
   - export CABAL=cabal-$CABALVER
   - export PATH=/opt/ghc/$GHCVER/bin:$PATH
   - pwd
-  - ls -al .
-  - cat .cabal/config
-  - rm -rf .cabal
+  - ls -al ~
+  - cat ~/.cabal/config
+  - rm -rf ~/.cabal
   - $CABAL update
 
 # install:
