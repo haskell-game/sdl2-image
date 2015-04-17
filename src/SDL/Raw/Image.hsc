@@ -78,7 +78,7 @@ import Prelude         hiding (init)
 import SDL.Raw.Types          (Version, Surface, RWops)
 import SDL.Raw.Helper         (liftF)
 
-foreign import ccall "SDL_image.h IMG_Linked_Version"
+foreign import ccall "IMG_Linked_Version"
   getVersion' :: IO (Ptr Version)
 
 {-# INLINE getVersion #-}
@@ -94,7 +94,7 @@ pattern IMG_INIT_WEBP = #{const IMG_INIT_WEBP}
 
 liftF "init" "IMG_Init" [t|InitFlags -> IO InitFlags|]
 
-foreign import ccall "SDL_image.h IMG_Quit"
+foreign import ccall "IMG_Quit"
   quit' :: IO ()
 
 {-# INLINE quit #-}
