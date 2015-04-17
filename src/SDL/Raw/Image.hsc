@@ -12,7 +12,10 @@ documentation.
 
 -}
 
+{-# OPTIONS_GHC -fno-warn-missing-signatures #-}
+
 {-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module SDL.Raw.Image
   (
@@ -73,6 +76,7 @@ import Foreign.C.Types        (CInt(..))
 import Foreign.Ptr            (Ptr)
 import Prelude         hiding (init)
 import SDL.Raw.Types          (Version, Surface, RWops)
+import SDL.Raw.Helper         (liftF)
 
 foreign import ccall "SDL_image.h IMG_Linked_Version"
   getVersion' :: IO (Ptr Version)
@@ -88,12 +92,7 @@ pattern IMG_INIT_PNG  = #{const IMG_INIT_PNG}
 pattern IMG_INIT_TIF  = #{const IMG_INIT_TIF}
 pattern IMG_INIT_WEBP = #{const IMG_INIT_WEBP}
 
-foreign import ccall "SDL_image.h IMG_Init"
-  init' :: InitFlags -> IO InitFlags
-
-{-# INLINE init #-}
-init :: MonadIO m => InitFlags -> m InitFlags
-init = liftIO . init'
+liftF "init" "IMG_Init" [t|InitFlags -> IO InitFlags|]
 
 foreign import ccall "SDL_image.h IMG_Quit"
   quit' :: IO ()
@@ -102,233 +101,47 @@ foreign import ccall "SDL_image.h IMG_Quit"
 quit :: MonadIO m => m ()
 quit = liftIO quit'
 
-foreign import ccall "SDL_image.h IMG_Load"
-  load' :: CString -> IO (Ptr Surface)
-
-{-# INLINE load #-}
-load :: MonadIO m => CString -> m (Ptr Surface)
-load = liftIO . load'
+liftF "load" "IMG_Load" [t|CString -> IO (Ptr Surface)|]
 
 -- | Should the 'Ptr' 'RWops' be freed after an operation? 1 for yes, 0 for no.
 type Free = CInt
 
-foreign import ccall "SDL_image.h IMG_Load_RW"
-  load_RW' :: Ptr RWops -> Free -> IO (Ptr Surface)
-
-{-# INLINE load_RW #-}
-load_RW :: MonadIO m => Ptr RWops -> Free -> m (Ptr Surface)
-load_RW src = liftIO . load_RW' src
+liftF "load_RW" "IMG_Load_RW" [t|Ptr RWops -> Free -> IO (Ptr Surface)|]
 
 -- | A case-insensitive string containing the desired format, e.g. @\"jpg\"@ or
 -- @\"PNG\"@.
 type Format = CString
 
-foreign import ccall "SDL_image.h IMG_LoadTyped_RW"
-  loadTyped_RW' :: Ptr RWops -> Free -> Format -> IO (Ptr Surface)
+liftF "loadTyped_RW" "IMG_LoadTyped_RW"
+  [t|Ptr RWops -> Free -> Format -> IO (Ptr Surface)|]
 
-{-# INLINE loadTyped_RW #-}
-loadTyped_RW :: MonadIO m => Ptr RWops -> Free -> Format -> m (Ptr Surface)
-loadTyped_RW src free = liftIO . loadTyped_RW' src free
+liftF "loadCUR_RW"  "IMG_LoadCUR_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadICO_RW"  "IMG_LoadICO_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadBMP_RW"  "IMG_LoadBMP_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadPNM_RW"  "IMG_LoadPNM_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadXPM_RW"  "IMG_LoadXPM_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadXCF_RW"  "IMG_LoadXCF_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadPCX_RW"  "IMG_LoadPCX_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadGIF_RW"  "IMG_LoadGIF_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadJPG_RW"  "IMG_LoadJPG_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadTIF_RW"  "IMG_LoadTIF_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadPNG_RW"  "IMG_LoadPNG_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadTGA_RW"  "IMG_LoadTGA_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadLBM_RW"  "IMG_LoadLBM_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadXV_RW"   "IMG_LoadXV_RW"    [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadWEBP_RW" "IMG_LoadWEBP_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
 
-foreign import ccall "SDL_image.h IMG_LoadCUR_RW"
-  loadCUR_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadCUR_RW #-}
-loadCUR_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadCUR_RW = liftIO . loadCUR_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadICO_RW"
-  loadICO_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadICO_RW #-}
-loadICO_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadICO_RW = liftIO . loadICO_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadBMP_RW"
-  loadBMP_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadBMP_RW #-}
-loadBMP_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadBMP_RW = liftIO . loadBMP_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadPNM_RW"
-  loadPNM_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadPNM_RW #-}
-loadPNM_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadPNM_RW = liftIO . loadPNM_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadXPM_RW"
-  loadXPM_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadXPM_RW #-}
-loadXPM_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadXPM_RW = liftIO . loadXPM_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadXCF_RW"
-  loadXCF_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadXCF_RW #-}
-loadXCF_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadXCF_RW = liftIO . loadXCF_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadPCX_RW"
-  loadPCX_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadPCX_RW #-}
-loadPCX_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadPCX_RW = liftIO . loadPCX_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadGIF_RW"
-  loadGIF_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadGIF_RW #-}
-loadGIF_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadGIF_RW = liftIO . loadGIF_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadJPG_RW"
-  loadJPG_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadJPG_RW #-}
-loadJPG_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadJPG_RW = liftIO . loadJPG_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadTIF_RW"
-  loadTIF_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadTIF_RW #-}
-loadTIF_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadTIF_RW = liftIO . loadTIF_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadPNG_RW"
-  loadPNG_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadPNG_RW #-}
-loadPNG_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadPNG_RW = liftIO . loadPNG_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadTGA_RW"
-  loadTGA_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadTGA_RW #-}
-loadTGA_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadTGA_RW = liftIO . loadTGA_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadLBM_RW"
-  loadLBM_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadLBM_RW #-}
-loadLBM_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadLBM_RW = liftIO . loadLBM_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadXV_RW"
-  loadXV_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadXV_RW #-}
-loadXV_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadXV_RW = liftIO . loadXV_RW'
-
-foreign import ccall "SDL_image.h IMG_LoadWEBP_RW"
-  loadWEBP_RW' :: Ptr RWops -> IO (Ptr Surface)
-
-{-# INLINE loadWEBP_RW #-}
-loadWEBP_RW :: MonadIO m => Ptr RWops -> m (Ptr Surface)
-loadWEBP_RW = liftIO . loadWEBP_RW'
-
-foreign import ccall "SDL_image.h IMG_isCUR"
-  isCUR' :: Ptr RWops -> IO CInt
-
-{-# INLINE isCUR #-}
-isCUR :: MonadIO m => Ptr RWops -> m CInt
-isCUR = liftIO . isCUR'
-
-foreign import ccall "SDL_image.h IMG_isICO"
-  isICO' :: Ptr RWops -> IO CInt
-
-{-# INLINE isICO #-}
-isICO :: MonadIO m => Ptr RWops -> m CInt
-isICO = liftIO . isICO'
-
-foreign import ccall "SDL_image.h IMG_isBMP"
-  isBMP' :: Ptr RWops -> IO CInt
-
-{-# INLINE isBMP #-}
-isBMP :: MonadIO m => Ptr RWops -> m CInt
-isBMP = liftIO . isBMP'
-
-foreign import ccall "SDL_image.h IMG_isPNM"
-  isPNM' :: Ptr RWops -> IO CInt
-
-{-# INLINE isPNM #-}
-isPNM :: MonadIO m => Ptr RWops -> m CInt
-isPNM = liftIO . isPNM'
-
-foreign import ccall "SDL_image.h IMG_isXPM"
-  isXPM' :: Ptr RWops -> IO CInt
-
-{-# INLINE isXPM #-}
-isXPM :: MonadIO m => Ptr RWops -> m CInt
-isXPM = liftIO . isXPM'
-
-foreign import ccall "SDL_image.h IMG_isXCF"
-  isXCF' :: Ptr RWops -> IO CInt
-
-{-# INLINE isXCF #-}
-isXCF :: MonadIO m => Ptr RWops -> m CInt
-isXCF = liftIO . isXCF'
-
-foreign import ccall "SDL_image.h IMG_isPCX"
-  isPCX' :: Ptr RWops -> IO CInt
-
-{-# INLINE isPCX #-}
-isPCX :: MonadIO m => Ptr RWops -> m CInt
-isPCX = liftIO . isPCX'
-
-foreign import ccall "SDL_image.h IMG_isGIF"
-  isGIF' :: Ptr RWops -> IO CInt
-
-{-# INLINE isGIF #-}
-isGIF :: MonadIO m => Ptr RWops -> m CInt
-isGIF = liftIO . isGIF'
-
-foreign import ccall "SDL_image.h IMG_isJPG"
-  isJPG' :: Ptr RWops -> IO CInt
-
-{-# INLINE isJPG #-}
-isJPG :: MonadIO m => Ptr RWops -> m CInt
-isJPG = liftIO . isJPG'
-
-foreign import ccall "SDL_image.h IMG_isTIF"
-  isTIF' :: Ptr RWops -> IO CInt
-
-{-# INLINE isTIF #-}
-isTIF :: MonadIO m => Ptr RWops -> m CInt
-isTIF = liftIO . isTIF'
-
-foreign import ccall "SDL_image.h IMG_isPNG"
-  isPNG' :: Ptr RWops -> IO CInt
-
-{-# INLINE isPNG #-}
-isPNG :: MonadIO m => Ptr RWops -> m CInt
-isPNG = liftIO . isPNG'
-
-foreign import ccall "SDL_image.h IMG_isLBM"
-  isLBM' :: Ptr RWops -> IO CInt
-
-{-# INLINE isLBM #-}
-isLBM :: MonadIO m => Ptr RWops -> m CInt
-isLBM = liftIO . isLBM'
-
-foreign import ccall "SDL_image.h IMG_isXV"
-  isXV' :: Ptr RWops -> IO CInt
-
-{-# INLINE isXV #-}
-isXV :: MonadIO m => Ptr RWops -> m CInt
-isXV = liftIO . isXV'
-
-foreign import ccall "SDL_image.h IMG_isWEBP"
-  isWEBP' :: Ptr RWops -> IO CInt
-
-{-# INLINE isWEBP #-}
-isWEBP :: MonadIO m => Ptr RWops -> m CInt
-isWEBP = liftIO . isWEBP'
+liftF "isCUR"  "IMG_isCUR"  [t|Ptr RWops -> IO CInt|]
+liftF "isICO"  "IMG_isICO"  [t|Ptr RWops -> IO CInt|]
+liftF "isBMP"  "IMG_isBMP"  [t|Ptr RWops -> IO CInt|]
+liftF "isPNM"  "IMG_isPNM"  [t|Ptr RWops -> IO CInt|]
+liftF "isXPM"  "IMG_isXPM"  [t|Ptr RWops -> IO CInt|]
+liftF "isXCF"  "IMG_isXCF"  [t|Ptr RWops -> IO CInt|]
+liftF "isPCX"  "IMG_isPCX"  [t|Ptr RWops -> IO CInt|]
+liftF "isGIF"  "IMG_isGIF"  [t|Ptr RWops -> IO CInt|]
+liftF "isJPG"  "IMG_isJPG"  [t|Ptr RWops -> IO CInt|]
+liftF "isTIF"  "IMG_isTIF"  [t|Ptr RWops -> IO CInt|]
+liftF "isPNG"  "IMG_isPNG"  [t|Ptr RWops -> IO CInt|]
+liftF "isLBM"  "IMG_isLBM"  [t|Ptr RWops -> IO CInt|]
+liftF "isXV"   "IMG_isXV"   [t|Ptr RWops -> IO CInt|]
+liftF "isWEBP" "IMG_isWEBP" [t|Ptr RWops -> IO CInt|]
