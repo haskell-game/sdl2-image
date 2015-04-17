@@ -3,8 +3,7 @@ language: haskell
 sudo: required
 
 env:
-  - GHCVER=7.10.1
-  - CABALVER=1.20
+  - GHCVER=7.10.1 CABALVER=1.20
 
 before_install:
   - cd ..
