@@ -24,6 +24,7 @@ before_install:
   - travis_retry sudo apt-get install cabal-install-1.22 ghc-$GHCVER happy
   - export CABAL=cabal-1.22
   - export PATH=/opt/ghc/$GHCVER/bin:$PATH
+  - $CABAL update
 
 install:
   # Install haskell-game/sdl2.
@@ -32,6 +33,7 @@ install:
 
 script:
   - cd sdl2-image
+  - $CABAL clean
   - $CABAL configure
   - $CABAL install --only-dependencies -j
   - $CABAL build
