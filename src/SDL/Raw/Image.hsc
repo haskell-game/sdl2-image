@@ -92,7 +92,8 @@ pattern IMG_INIT_PNG  = #{const IMG_INIT_PNG}
 pattern IMG_INIT_TIF  = #{const IMG_INIT_TIF}
 pattern IMG_INIT_WEBP = #{const IMG_INIT_WEBP}
 
-liftF "init" "IMG_Init" [t|InitFlags -> IO InitFlags|]
+liftF "init" "IMG_Init"
+  [t|InitFlags -> IO InitFlags|]
 
 foreign import ccall "IMG_Quit"
   quit' :: IO ()
@@ -101,35 +102,36 @@ foreign import ccall "IMG_Quit"
 quit :: MonadIO m => m ()
 quit = liftIO quit'
 
-liftF "load" "IMG_Load" [t|CString -> IO (Ptr Surface)|]
+liftF "load" "IMG_Load"
+  [t|CString -> IO (Ptr Surface)|]
 
 -- | Should the 'Ptr' 'RWops' be freed after an operation? 1 for yes, 0 for no.
 type Free = CInt
 
-liftF "load_RW" "IMG_Load_RW" [t|Ptr RWops -> Free -> IO (Ptr Surface)|]
+liftF "load_RW" "IMG_Load_RW"
+  [t|Ptr RWops -> Free -> IO (Ptr Surface)|]
 
--- | A case-insensitive string containing the desired format, e.g. @\"jpg\"@ or
--- @\"PNG\"@.
+-- | A case-insensitive desired format, e.g. @\"jpg\"@ or @\"PNG\"@.
 type Format = CString
 
 liftF "loadTyped_RW" "IMG_LoadTyped_RW"
   [t|Ptr RWops -> Free -> Format -> IO (Ptr Surface)|]
 
-liftF "loadCUR_RW"  "IMG_LoadCUR_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadICO_RW"  "IMG_LoadICO_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadBMP_RW"  "IMG_LoadBMP_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadPNM_RW"  "IMG_LoadPNM_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadXPM_RW"  "IMG_LoadXPM_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadXCF_RW"  "IMG_LoadXCF_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadPCX_RW"  "IMG_LoadPCX_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadGIF_RW"  "IMG_LoadGIF_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadJPG_RW"  "IMG_LoadJPG_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadTIF_RW"  "IMG_LoadTIF_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadPNG_RW"  "IMG_LoadPNG_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadTGA_RW"  "IMG_LoadTGA_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadLBM_RW"  "IMG_LoadLBM_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadXV_RW"   "IMG_LoadXV_RW"    [t|Ptr RWops -> IO (Ptr Surface)|]
-liftF "loadWEBP_RW" "IMG_LoadWEBP_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadCUR_RW"  "IMG_LoadCUR_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadICO_RW"  "IMG_LoadICO_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadBMP_RW"  "IMG_LoadBMP_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadPNM_RW"  "IMG_LoadPNM_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadXPM_RW"  "IMG_LoadXPM_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadXCF_RW"  "IMG_LoadXCF_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadPCX_RW"  "IMG_LoadPCX_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadGIF_RW"  "IMG_LoadGIF_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadJPG_RW"  "IMG_LoadJPG_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadTIF_RW"  "IMG_LoadTIF_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadPNG_RW"  "IMG_LoadPNG_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadTGA_RW"  "IMG_LoadTGA_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadLBM_RW"  "IMG_LoadLBM_RW"  [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadXV_RW"   "IMG_LoadXV_RW"   [t|Ptr RWops -> IO (Ptr Surface)|]
+liftF "loadWEBP_RW" "IMG_LoadWEBP_RW" [t|Ptr RWops -> IO (Ptr Surface)|]
 
 liftF "isCUR"  "IMG_isCUR"  [t|Ptr RWops -> IO CInt|]
 liftF "isICO"  "IMG_isICO"  [t|Ptr RWops -> IO CInt|]
