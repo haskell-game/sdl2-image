@@ -15,10 +15,10 @@ inlined MonadIO variant. Use this to simplify the package's SDL.Raw.* modules.
 {-# LANGUAGE LambdaCase      #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module SDL.Raw.Helper where
+module SDL.Raw.Helper (liftF) where
 
 import Control.Monad           (replicateM)
-import Control.Monad.IO.Class  (liftIO)
+import Control.Monad.IO.Class  (MonadIO, liftIO)
 import Language.Haskell.TH
 
 -- | Given a name @fname@, a name of a C function @cname@ and the desired
@@ -35,15 +35,26 @@ liftF fname cname ftype = do
   -- The generated function accepts n arguments.
   args <- replicateM (countArgs t') $ newName "x"
 
-  return
-    [ ForeignD $ ImportF CCall Unsafe cname f' t'
-    , PragmaD $ InlineP f Inline FunLike AllPhases
-    , FunD f
+  -- If the function has no arguments, then we just liftIO it directly.
+  -- However, this fails to typecheck without an explicit type signature.
+  -- Therefore, we include one. TODO: Can we get rid of this?
+  sigd <- case args of
+            [] -> ((:[]) . SigD f) `fmap` liftType t'
+            _  -> return []
+
+  return $ concat
+    [
+      [ ForeignD $ ImportF CCall Unsafe cname f' t'
+      , PragmaD $ InlineP f Inline FunLike AllPhases
+      ]
+    , sigd
+    , [ FunD f
         [ Clause
             (map VarP args)
             (NormalB $ 'liftIO `applyTo` [f' `applyTo` map VarE args])
             []
         ]
+      ]
     ]
 
 -- | How many arguments does a function of a given type take?
@@ -63,3 +74,15 @@ applyTo f es = loop (tail es) . AppE (VarE f) $ head es
   where
     loop []     e = e
     loop (a:as) e = loop as $ AppE e a
+
+-- | Fuzzily speaking, converts a given IO type into a MonadIO m one.
+liftType :: Type -> Q Type
+liftType = \case
+  AppT _ t -> do
+    m <- newName "m"
+    return $
+      ForallT
+        [PlainTV m]
+        [AppT (ConT ''MonadIO) $ VarT m]
+        (AppT (VarT m) t)
+  t -> return t
