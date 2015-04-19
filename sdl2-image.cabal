@@ -7,7 +7,7 @@ license-file:  LICENSE
 author:        Siniša Biđin
 maintainer:    sinisa@bidin.cc
 copyright:     Copyright © 2015 Siniša Biđin
-category:      Image, Graphics
+category:      Image, Graphics, Foreign
 build-type:    Simple
 cabal-version: >=1.10
 
