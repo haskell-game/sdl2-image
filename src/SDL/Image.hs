@@ -14,7 +14,6 @@ throwing an 'SDLException' in case it encounters an error.
 
 -}
 
-{-# LANGUAGE DeriveDataTypeable    #-}
 {-# LANGUAGE DeriveGeneric         #-}
 {-# LANGUAGE LambdaCase            #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -62,10 +61,8 @@ import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.Bits              ((.|.))
 import Data.ByteString        (ByteString)
 import Data.ByteString.Unsafe (unsafeUseAsCStringLen)
-import Data.Data              (Data)
 import Data.List              (find)
 import Data.Text              (pack)
-import Data.Typeable          (Typeable)
 import Foreign.C.String       (withCString)
 import Foreign.C.Types        (CInt)
 import Foreign.Ptr            (Ptr, castPtr)
@@ -106,7 +103,7 @@ data InitFlag
   | InitPNG  -- ^ Same, but for @PNG@ files.
   | InitTIF  -- ^ @TIF@ files.
   | InitWEBP -- ^ @WEBP@ files.
-  deriving (Eq, Enum, Ord, Bounded, Data, Generic, Typeable, Read, Show)
+  deriving (Eq, Enum, Ord, Bounded, Generic, Read, Show)
 
 flagToCInt :: InitFlag -> CInt
 flagToCInt =
@@ -219,7 +216,7 @@ data Format
   | PNG
   | TIF
   | WEBP
-  deriving (Eq, Enum, Ord, Bounded, Data, Generic, Typeable, Read, Show)
+  deriving (Eq, Enum, Ord, Bounded, Generic, Read, Show)
 
 -- Given an image format, return its raw predicate function.
 formatPredicate :: MonadIO m => Format -> Ptr RWops -> m CInt
