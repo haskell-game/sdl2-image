@@ -26,8 +26,10 @@ module SDL.Image
   --
   -- | Use the following functions to read any @PNG@, @JPG@, @TIF@, @GIF@,
   -- @WEBP@, @CUR@, @ICO@, @BMP@, @PNM@, @XPM@, @XCF@, @PCX@ and @XV@ formatted
-  -- data. If you have @TGA@-formatted data, you might wish to use the functions
-  -- from the <#tga following section> instead.
+  -- data.
+  --
+  -- If you have @TGA@-formatted data, you might wish to use the functions from
+  -- the <#tga following section> instead.
     load
   , decode
   , loadTexture
@@ -37,8 +39,10 @@ module SDL.Image
   --
   -- | #tga# Since @TGA@ images don't contain a specific unique signature, the
   -- following functions might succeed even when given files not formatted as
-  -- @TGA@ images. Only use these functions if you're certain the inputs are
-  -- @TGA@-formatted, otherwise they'll throw an exception.
+  -- @TGA@ images.
+  --
+  -- Only use these functions if you're certain the inputs are @TGA@-formatted,
+  -- otherwise they'll throw an exception.
   , loadTGA
   , decodeTGA
   , loadTextureTGA
@@ -96,8 +100,9 @@ initialize flags = do
     "IMG_Init"
     (SDL.Raw.Image.init cint)
 
--- | Flags intended to be fed to 'initialize'. Each designates early loading of
--- support for a particular image format.
+-- | Flags intended to be fed to 'initialize'.
+--
+-- Each designates early loading of support for a particular image format.
 data InitFlag
   = InitJPG  -- ^ Load support for reading @JPG@ files.
   | InitPNG  -- ^ Same, but for @PNG@ files.
@@ -114,24 +119,28 @@ flagToCInt =
     InitWEBP -> SDL.Raw.Image.IMG_INIT_WEBP
 
 -- | Loads any given file of a supported image type as a 'Surface', including
--- @TGA@ if the filename ends with @\".tga\"@. If you have @TGA@ files that
--- don't have names ending with @\".tga\"@, use 'loadTGA' instead.
+-- @TGA@ if the filename ends with @\".tga\"@.
+--
+-- If you have @TGA@ files that don't have names ending with @\".tga\"@, use
+-- 'loadTGA' instead.
 load :: (Functor m, MonadIO m) => FilePath -> m Surface
 load path = do
   fmap SDL.Surface .
     throwIfNull "SDL.Image.load" "IMG_Load" .
       liftIO $ withCString path SDL.Raw.Image.load
 
--- | Same as 'load', but returning a 'Texture' instead. For @TGA@ files not
--- ending in ".tga", use 'loadTextureTGA' instead.
+-- | Same as 'load', but returning a 'Texture' instead.
+--
+-- For @TGA@ files not ending in ".tga", use 'loadTextureTGA' instead.
 loadTexture :: (Functor m, MonadIO m) => Renderer -> FilePath -> m Texture
 loadTexture r path =
   liftIO . bracket (load path) SDL.freeSurface $
     SDL.createTextureFromSurface r
 
--- | Reads an image from a 'ByteString'. This will work for all supported image
--- types, __except TGA__. If you need to decode a @TGA@ 'ByteString', use
--- 'decodeTGA' instead.
+-- | Reads an image from a 'ByteString'.
+--
+-- This will work for all supported image types, __except TGA__. If you need to
+-- decode a @TGA@ 'ByteString', use 'decodeTGA' instead.
 decode :: MonadIO m => ByteString -> m Surface
 decode bytes = liftIO $ do
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
@@ -140,8 +149,9 @@ decode bytes = liftIO $ do
       throwIfNull "SDL.Image.decode" "IMG_Load_RW" $
         SDL.Raw.Image.load_RW rw 0
 
--- | Same as 'decode', but returning a 'Texture' instead. If you need to decode
--- a @TGA@ 'ByteString', use 'decodeTextureTGA' instead.
+-- | Same as 'decode', but returning a 'Texture' instead.
+--
+-- If you need to decode a @TGA@ 'ByteString', use 'decodeTextureTGA' instead.
 decodeTexture :: MonadIO m => Renderer -> ByteString -> m Texture
 decodeTexture r bytes =
   liftIO . bracket (decode bytes) SDL.freeSurface $
@@ -163,8 +173,9 @@ loadTextureTGA r path =
   liftIO . bracket (loadTGA path) SDL.freeSurface $
     SDL.createTextureFromSurface r
 
--- | Reads a @TGA@ image from a 'ByteString'. Assumes the input is a
--- @TGA@-formatted image.
+-- | Reads a @TGA@ image from a 'ByteString'.
+--
+-- Assumes the input is a @TGA@-formatted image.
 decodeTGA :: MonadIO m => ByteString -> m Surface
 decodeTGA bytes = liftIO $ do
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
@@ -193,8 +204,10 @@ formattedAs f bytes = unsafePerformIO $ do
         throwIO $ SDLCallFailed "SDL.Image.formattedAs" fun err
 
 -- | Tries to detect the image format by attempting 'formattedAs' with each
--- possible 'Format'. If you're trying to test for a specific format, use a
--- specific 'formattedAs' directly instead.
+-- possible 'Format'.
+--
+-- If you're trying to test for a specific format, use a specific 'formattedAs'
+-- directly instead.
 format :: ByteString -> Maybe Format
 format bytes = fmap fst $ find snd attempts
   where
