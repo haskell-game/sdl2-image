@@ -124,7 +124,7 @@ flagToCInt =
 -- If you have @TGA@ files that don't have names ending with @\".tga\"@, use
 -- 'loadTGA' instead.
 load :: (Functor m, MonadIO m) => FilePath -> m Surface
-load path = do
+load path =
   fmap SDL.Surface .
     throwIfNull "SDL.Image.load" "IMG_Load" .
       liftIO $ withCString path SDL.Raw.Image.load
@@ -142,7 +142,7 @@ loadTexture r path =
 -- This will work for all supported image types, __except TGA__. If you need to
 -- decode a @TGA@ 'ByteString', use 'decodeTGA' instead.
 decode :: MonadIO m => ByteString -> m Surface
-decode bytes = liftIO $ do
+decode bytes = liftIO .
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
     rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
     fmap SDL.Surface .
@@ -177,7 +177,7 @@ loadTextureTGA r path =
 --
 -- Assumes the input is a @TGA@-formatted image.
 decodeTGA :: MonadIO m => ByteString -> m Surface
-decodeTGA bytes = liftIO $ do
+decodeTGA bytes = liftIO .
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
     rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
     fmap SDL.Surface .
@@ -192,7 +192,7 @@ decodeTextureTGA r bytes =
 
 -- | Tests whether a 'ByteString' contains an image of a given format.
 formattedAs :: Format -> ByteString -> Bool
-formattedAs f bytes = unsafePerformIO $ do
+formattedAs f bytes = unsafePerformIO .
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
     rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
     formatPredicate f rw >>= \case
@@ -209,7 +209,7 @@ formattedAs f bytes = unsafePerformIO $ do
 -- If you're trying to test for a specific format, use a specific 'formattedAs'
 -- directly instead.
 format :: ByteString -> Maybe Format
-format bytes = fmap fst $ find snd attempts
+format bytes = fst <$> find snd attempts
   where
     attempts = map (\f -> (f, formattedAs f bytes)) [minBound..]
 

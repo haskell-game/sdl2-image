@@ -4,6 +4,7 @@
 module Main where
 
 import Control.Concurrent (threadDelay)
+import Control.Monad      (forM_)
 import Data.Text          (Text)
 import Data.Text.IO       (putStrLn)
 import Prelude     hiding (putStrLn)
@@ -47,7 +48,7 @@ main = do
 
     (path:_) ->
       -- Run each of the examples within a newly-created window.
-      flip mapM_ examples $ \(name, action) -> do
+      forM_ examples $ \(name, action) -> do
         putStrLn name
         window <- SDL.createWindow name SDL.defaultWindow
         SDL.showWindow window

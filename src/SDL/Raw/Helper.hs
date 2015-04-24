@@ -72,8 +72,7 @@ applyTo :: Name -> [Exp] -> Exp
 applyTo f [] = VarE f
 applyTo f es = loop (tail es) . AppE (VarE f) $ head es
   where
-    loop []     e = e
-    loop (a:as) e = loop as $ AppE e a
+    loop as e = foldl AppE e as
 
 -- | Fuzzily speaking, converts a given IO type into a MonadIO m one.
 liftType :: Type -> Q Type
