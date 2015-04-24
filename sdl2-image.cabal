@@ -4,8 +4,8 @@ synopsis:      Bindings to SDL2_image.
 description:   Haskell bindings to SDL2_image.
 license:       MIT
 license-file:  LICENSE
-author:        Siniša Biđin
-maintainer:    sinisa@bidin.cc
+author:        Siniša Biđin <sinisa@bidin.eu>
+maintainer:    Siniša Biđin <sinisa@bidin.eu>
 copyright:     Copyright © 2015 Siniša Biđin
 category:      Image, Graphics, Foreign
 build-type:    Simple
@@ -16,7 +16,7 @@ source-repository head
   location: https://github.com/sbidin/sdl2-image.git
 
 library
-  ghc-options: -Wall -O2
+  ghc-options: -Wall
 
   exposed-modules:
     SDL.Image,
@@ -37,7 +37,7 @@ library
     bytestring       >= 0.10.4.0,
     sdl2             >= 2.0,
     text             >= 1.1.0.0,
-    template-haskell >= 2.10.0.0,
+    template-haskell,
     transformers     >= 0.2
 
   default-language:
@@ -57,7 +57,7 @@ executable sdl2-image-example
     build-depends:
       base       >= 4.7 && < 5,
       sdl2       >= 2.0,
-      sdl2-image >= 0.2,
+      sdl2-image,
       text       >= 1.1.0.0
   else
     buildable: False
