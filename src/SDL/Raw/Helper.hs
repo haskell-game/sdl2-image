@@ -44,7 +44,7 @@ liftF fname cname ftype = do
 
   return $ concat
     [
-      [ ForeignD $ ImportF CCall Unsafe cname f' t'
+      [ ForeignD $ ImportF CCall Safe cname f' t'
       , PragmaD $ InlineP f Inline FunLike AllPhases
       ]
     , sigd
