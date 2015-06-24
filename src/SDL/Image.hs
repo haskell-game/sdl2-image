@@ -118,6 +118,10 @@ flagToCInt =
     InitTIF  -> SDL.Raw.Image.IMG_INIT_TIF
     InitWEBP -> SDL.Raw.Image.IMG_INIT_WEBP
 
+-- | A helper for unmanaged 'Surface's, since it is not exposed by SDL itself.
+unmanaged :: Ptr SDL.Raw.Surface -> Surface
+unmanaged p = Surface p Nothing
+
 -- | Loads any given file of a supported image type as a 'Surface', including
 -- @TGA@ if the filename ends with @\".tga\"@.
 --
@@ -125,7 +129,7 @@ flagToCInt =
 -- 'loadTGA' instead.
 load :: (Functor m, MonadIO m) => FilePath -> m Surface
 load path =
-  fmap SDL.Surface .
+  fmap unmanaged .
     throwIfNull "SDL.Image.load" "IMG_Load" .
       liftIO $ withCString path SDL.Raw.Image.load
 
@@ -145,7 +149,7 @@ decode :: MonadIO m => ByteString -> m Surface
 decode bytes = liftIO .
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
     rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
-    fmap SDL.Surface .
+    fmap unmanaged .
       throwIfNull "SDL.Image.decode" "IMG_Load_RW" $
         SDL.Raw.Image.load_RW rw 0
 
@@ -161,7 +165,7 @@ decodeTexture r bytes =
 -- load them using this function.
 loadTGA :: (Functor m, MonadIO m) => FilePath -> m Surface
 loadTGA path =
-  fmap SDL.Surface .
+  fmap unmanaged .
     throwIfNull "SDL.Image.loadTGA" "IMG_LoadTGA_RW" .
       liftIO $ do
         rw <- withCString "rb" $ withCString path . flip rwFromFile
@@ -180,7 +184,7 @@ decodeTGA :: MonadIO m => ByteString -> m Surface
 decodeTGA bytes = liftIO .
   unsafeUseAsCStringLen bytes $ \(cstr, len) -> do
     rw <- rwFromConstMem (castPtr cstr) (fromIntegral len)
-    fmap SDL.Surface .
+    fmap unmanaged .
       throwIfNull "SDL.Image.decodeTGA" "IMG_LoadTGA_RW" $
         SDL.Raw.Image.loadTGA_RW rw
 
