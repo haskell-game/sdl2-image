@@ -10,9 +10,11 @@ bug or feel that something is missing.
 
 ##### Install
 
-This library depends on and is meant to be used with the `new-api` branch of
-[haskell-game/sdl2](https://github.com/haskell-game/sdl2). After installing
-haskell-game/sdl2, you can install sdl2-image manually from source:
+This library depends on the new API version of
+[haskell-game/sdl2](https://github.com/haskell-game/sdl2), available on
+Hackage as
+[sdl2 version 2.0.0 or greater](http://hackage.haskell.org/package/sdl2). With
+that in mind, you can install sdl2-image from source like this:
 
 ```bash
 git clone git@github.com:sbidin/sdl2-image.git
