@@ -22,7 +22,7 @@ examples = [
     \window path -> do
       image <- SDL.Image.load path
       screen <- SDL.getWindowSurface window
-      SDL.blitSurface image Nothing screen Nothing
+      SDL.surfaceBlit image Nothing screen Nothing
       SDL.updateWindowSurface window
       SDL.freeSurface image),
 
@@ -30,9 +30,9 @@ examples = [
     \window path -> do
        r <- SDL.createRenderer window (-1) SDL.defaultRenderer
        texture <- SDL.Image.loadTexture r path
-       SDL.renderClear r
-       SDL.renderCopy r texture Nothing Nothing
-       SDL.renderPresent r
+       SDL.clear r
+       SDL.copy r texture Nothing Nothing
+       SDL.present r
        SDL.destroyTexture texture)]
 
 main :: IO ()
