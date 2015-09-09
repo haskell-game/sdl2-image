@@ -3,7 +3,7 @@
 Module      : SDL.Raw.Image
 Copyright   : (c) 2015 Siniša Biđin
 License     : MIT
-Maintainer  : sinisa@bidin.cc
+Maintainer  : sinisa@bidin.eu
 Stability   : experimental
 
 Raw bindings to the @SDL2_image@ library. No error-handling is done here. For
