@@ -1,5 +1,0 @@
-packages:
-- '.'
-extra-deps:
-- sdl2-2.0.0
-resolver: lts-3.4
