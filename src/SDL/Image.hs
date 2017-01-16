@@ -127,7 +127,7 @@ unmanaged p = Surface p Nothing
 --
 -- If you have @TGA@ files that don't have names ending with @\".tga\"@, use
 -- 'loadTGA' instead.
-load :: (Functor m, MonadIO m) => FilePath -> m Surface
+load :: MonadIO m => FilePath -> m Surface
 load path =
   fmap unmanaged .
     throwIfNull "SDL.Image.load" "IMG_Load" .
@@ -136,7 +136,7 @@ load path =
 -- | Same as 'load', but returning a 'Texture' instead.
 --
 -- For @TGA@ files not ending in ".tga", use 'loadTextureTGA' instead.
-loadTexture :: (Functor m, MonadIO m) => Renderer -> FilePath -> m Texture
+loadTexture :: MonadIO m => Renderer -> FilePath -> m Texture
 loadTexture r path =
   liftIO . bracket (load path) SDL.freeSurface $
     SDL.createTextureFromSurface r
@@ -163,7 +163,7 @@ decodeTexture r bytes =
 
 -- | If your @TGA@ files aren't in a filename ending with @\".tga\"@, you can
 -- load them using this function.
-loadTGA :: (Functor m, MonadIO m) => FilePath -> m Surface
+loadTGA :: MonadIO m => FilePath -> m Surface
 loadTGA path =
   fmap unmanaged .
     throwIfNull "SDL.Image.loadTGA" "IMG_LoadTGA_RW" .
@@ -172,7 +172,7 @@ loadTGA path =
         SDL.Raw.Image.loadTGA_RW rw
 
 -- | Same as 'loadTGA', only returning a 'Texture' instead.
-loadTextureTGA :: (Functor m, MonadIO m) => Renderer -> FilePath -> m Texture
+loadTextureTGA :: MonadIO m => Renderer -> FilePath -> m Texture
 loadTextureTGA r path =
   liftIO . bracket (loadTGA path) SDL.freeSurface $
     SDL.createTextureFromSurface r
