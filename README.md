@@ -10,24 +10,13 @@ bug or feel that something is missing.
 
 ##### Install
 
-This library depends on the new API version of
-[haskell-game/sdl2](https://github.com/haskell-game/sdl2), available on
-Hackage as
-[sdl2 version 2.0.0 or greater](http://hackage.haskell.org/package/sdl2). With
-that in mind, you can install sdl2-image from source like this:
-
 ```bash
-git clone git@github.com:sbidin/sdl2-image.git
-cd sdl2-image
-cabal install
+cabal install sdl2-image
 ```
-
-Note that you might get compile errors if you're not using the latest GHC. Only
-7.10 is currently tested.
 
 ##### Documentation
 
-You can find the documentation [here](https://bidin.eu/docs/sdl2-image).
+For documentation, [visit Hackage](https://hackage.haskell.org/package/sdl2-image).
 
 The
 [original SDL2_image documentation](http://www.libsdl.org/projects/SDL_image/docs/SDL_image.html)
