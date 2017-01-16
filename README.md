@@ -1,5 +1,6 @@
 # sdl2-image
 
+[![Hackage](https://img.shields.io/hackage/v/sdl2-image.svg)](https://hackage.haskell.org/package/sdl2-image)
 [![Build Status](https://travis-ci.org/sbidin/sdl2-image.svg?branch=master)](https://travis-ci.org/sbidin/sdl2-image)
 
 #### Haskell bindings to SDL2_image
