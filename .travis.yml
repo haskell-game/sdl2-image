@@ -6,10 +6,13 @@ cache:
   - $HOME/.stack
 
 before_install:
-- sudo add-apt-repository -y ppa:team-xbmc/ppa
-- sudo apt-get update -qq
-- sudo apt-get install -y libsdl2-dev
-- sudo apt-get install -y libsdl2-image-dev
+- cs ..
+- wget -q http://www.libsdl.org/release/SDL2-2.0.3.tar.gz
+- tar xf SDL2-*.tar.gz
+- cd SDL2-* && ./configure && make && sudo make install && cd ..
+- wget -q http://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.0.tar.gz
+- tar xf SDL2_image-*.tar.gz
+- cd SDL2_image-* && ./configure && make && sudo make install && cd ..
 - mkdir -p ~/.local/bin
 - export PATH=$HOME/.local/bin:$PATH
 - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
@@ -18,4 +21,4 @@ install:
 - stack --no-terminal --install-ghc test --only-dependencies
 
 script:
-- stack --no-terminal test --haddock --no-haddock-deps
+- stack --no-terminal test --haddock --no-haddock-deps --flag sdl2-image:example
