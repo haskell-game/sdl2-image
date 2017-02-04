@@ -23,7 +23,6 @@ library
     SDL.Raw.Image
 
   other-modules:
-    SDL.ExceptionHelper,
     SDL.Raw.Helper
 
   hs-source-dirs:
