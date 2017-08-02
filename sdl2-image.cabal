@@ -42,6 +42,9 @@ library
   default-language:
     Haskell2010
 
+  if os(windows)
+    cpp-options: -D_SDL_main_h
+
 flag example
   description: Build the example executable
   default:     False
