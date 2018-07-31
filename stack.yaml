@@ -1,7 +1,0 @@
-resolver: lts-7.18
-system-ghc: true
-packages:
-- '.'
-- location:
-    git: https://github.com/haskell-game/sdl2.git
-    commit: 50fd095dcfdf64a8d43f2ac001da06b2665cec00
