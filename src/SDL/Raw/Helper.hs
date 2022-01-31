@@ -17,9 +17,10 @@ inlined MonadIO variant. Use this to simplify the package's SDL.Raw.* modules.
 
 module SDL.Raw.Helper (liftF) where
 
-import Control.Monad           (replicateM)
-import Control.Monad.IO.Class  (MonadIO, liftIO)
+import Control.Monad                          (replicateM)
+import Control.Monad.IO.Class                 (MonadIO, liftIO)
 import Language.Haskell.TH
+import Language.Haskell.TH.Datatype.TyVarBndr (plainTVSpecified)
 
 -- | Given a name @fname@, a name of a C function @cname@ and the desired
 -- Haskell type @ftype@, this function generates:
@@ -81,7 +82,7 @@ liftType = \case
     m <- newName "m"
     return $
       ForallT
-        [PlainTV m]
+        [plainTVSpecified m]
         [AppT (ConT ''MonadIO) $ VarT m]
         (AppT (VarT m) t)
   t -> return t
